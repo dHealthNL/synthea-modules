@@ -1,0 +1,289 @@
+{
+  "name": "HartNet TAVI",
+  "states": {
+    "Initial": {
+      "type": "Initial",
+      "conditional_transition": [
+        {
+          "transition": "Female prevalentie",
+          "condition": {
+            "condition_type": "Gender",
+            "gender": "F"
+          }
+        },
+        {
+          "transition": "Male prevalentie",
+          "condition": {
+            "condition_type": "Gender",
+            "gender": "M"
+          }
+        }
+      ]
+    },
+    "Terminal": {
+      "type": "Terminal"
+    },
+    "Female prevalentie": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Eerste symptomen",
+          "distribution": 0.22
+        },
+        {
+          "transition": "Terminal",
+          "distribution": 0.78
+        }
+      ]
+    },
+    "Male prevalentie": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Eerste symptomen",
+          "distribution": 0.27
+        },
+        {
+          "transition": "Terminal",
+          "distribution": 0.73
+        }
+      ]
+    },
+    "Contact HA": {
+      "type": "Encounter",
+      "encounter_class": "ambulatory",
+      "reason": "Eerste symptomen",
+      "codes": [],
+      "direct_transition": "Beslis"
+    },
+    "Contact 2e lijn": {
+      "type": "Simple",
+      "direct_transition": "Diagnose"
+    },
+    "Beslis": {
+      "type": "Simple",
+      "conditional_transition": [
+        {
+          "transition": "Contact 2e lijn",
+          "condition": {
+            "condition_type": "And",
+            "conditions": [
+              {
+                "condition_type": "Active Condition",
+                "codes": [
+                  {
+                    "system": "SNOMED-CT",
+                    "code": 275120007,
+                    "display": "Verhoogde bloeddruk"
+                  }
+                ]
+              },
+              {
+                "condition_type": "Vital Sign",
+                "vital_sign": "Systolic Blood Pressure",
+                "operator": ">=",
+                "value": 180
+              }
+            ]
+          }
+        },
+        {
+          "transition": "Contact 2e lijn",
+          "condition": {
+            "condition_type": "Active Condition",
+            "codes": [
+              {
+                "system": "SNOMED-CT",
+                "code": 275120007,
+                "display": "aandoening van hart in familieanamnese"
+              }
+            ]
+          }
+        },
+        {
+          "transition": "Diabetes",
+          "condition": {
+            "condition_type": "Active Condition",
+            "codes": [
+              {
+                "system": "SNOMED-CT",
+                "code": 73211009,
+                "display": "Diabetes melitus"
+              }
+            ]
+          }
+        },
+        {
+          "transition": "Hartaandoening",
+          "condition": {
+            "condition_type": "Or",
+            "conditions": [
+              {
+                "condition_type": "Active Condition",
+                "codes": [
+                  {
+                    "system": "SNOMED-CT",
+                    "code": 275544003,
+                    "display": "aandoening van hart"
+                  }
+                ]
+              },
+              {
+                "condition_type": "Active Condition",
+                "codes": [
+                  {
+                    "system": "SNOMED-CT",
+                    "code": 161625008,
+                    "display": "operatie van hart"
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "Diabetes": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Contact 2e lijn",
+          "distribution": 0.23
+        },
+        {
+          "transition": "Terminal",
+          "distribution": 0.77
+        }
+      ]
+    },
+    "Hartaandoening": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Contact 2e lijn",
+          "distribution": 0.21
+        },
+        {
+          "transition": "Terminal",
+          "distribution": 0.79
+        }
+      ]
+    },
+    "Diagnose": {
+      "type": "ConditionOnset",
+      "assign_to_attribute": "",
+      "target_encounter": "",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": 394886001,
+          "display": "verdenking op hartaandoening"
+        }
+      ],
+      "direct_transition": "Onderzoeken"
+    },
+    "Onderzoeken": {
+      "type": "MultiObservation",
+      "category": "laboratory",
+      "number_of_observations": 0,
+      "codes": [
+        {
+          "system": "LOINC",
+          "code": "1234",
+          "display": "LOINC Code"
+        },
+        {
+          "system": "LOINC",
+          "code": "1234",
+          "display": "LOINC Code"
+        }
+      ],
+      "direct_transition": "Hartteambespreking 3e lijn",
+      "observations": [
+        {
+          "category": "procedure",
+          "unit": "",
+          "codes": [
+            {
+              "system": "SNOMED-CT",
+              "code": 433236007,
+              "display": "transthoracale echocardiografie"
+            },
+            {
+              "system": "SNOMED-CT",
+              "code": 399208008,
+              "display": "röntgenfoto van thorax"
+            },
+            {
+              "system": "SNOMED-CT",
+              "code": 33367005,
+              "display": "coronaire angiografie"
+            }
+          ],
+          "exact": {
+            "quantity": 1
+          }
+        }
+      ]
+    },
+    "Hartteambespreking 3e lijn": {
+      "type": "Encounter",
+      "encounter_class": "ambulatory",
+      "reason": "",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": 312384001,
+          "display": "multidisciplinaire evaluatie"
+        }
+      ],
+      "direct_transition": "Oudere?"
+    },
+    "Oudere?": {
+      "type": "Simple",
+      "conditional_transition": [
+        {
+          "transition": "Terminal",
+          "condition": {
+            "condition_type": "Age",
+            "operator": ">",
+            "quantity": 70,
+            "unit": "years"
+          }
+        }
+      ]
+    },
+    "Wachttijd_HA": {
+      "type": "Delay",
+      "direct_transition": "Contact HA",
+      "range": {
+        "low": 1,
+        "high": 14,
+        "unit": "days"
+      }
+    },
+    "Eerste symptomen": {
+      "type": "ConditionOnset",
+      "direct_transition": "Wachttijd_HA",
+      "assign_to_attribute": "",
+      "target_encounter": "Contact HA",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": 194828000,
+          "display": "angina pectoris"
+        },
+        {
+          "system": "SNOMED-CT",
+          "code": 267036007,
+          "display": "dyspneu"
+        },
+        {
+          "system": "SNOMED-CT",
+          "code": 84229001,
+          "display": "vermoeidheid"
+        }
+      ]
+    }
+  }
+}

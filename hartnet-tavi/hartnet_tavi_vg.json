@@ -1,0 +1,131 @@
+{
+  "name": "HartNet TAVI VG",
+  "remarks": [
+    "A blank module"
+  ],
+  "states": {
+    "Initial": {
+      "type": "Initial",
+      "conditional_transition": [
+        {
+          "transition": "VG1",
+          "condition": {
+            "condition_type": "Age",
+            "operator": ">",
+            "quantity": 45,
+            "unit": "years"
+          }
+        }
+      ]
+    },
+    "Terminal": {
+      "type": "Terminal"
+    },
+    "Diabetes": {
+      "type": "ConditionOnset",
+      "assign_to_attribute": "",
+      "target_encounter": "",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": 73211009,
+          "display": "diabetes melitus"
+        }
+      ],
+      "direct_transition": "VG2"
+    },
+    "Hartaandoening": {
+      "type": "ConditionOnset",
+      "assign_to_attribute": "",
+      "target_encounter": "",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": 275544003,
+          "display": "hartaandoening"
+        }
+      ],
+      "direct_transition": "VG3"
+    },
+    "Hartoperatie": {
+      "type": "Procedure",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": 161625008,
+          "display": "operatie van hart"
+        }
+      ],
+      "direct_transition": "VG4"
+    },
+    "Hartaandoening in familie": {
+      "type": "ConditionOnset",
+      "assign_to_attribute": "",
+      "target_encounter": "",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": 275120007,
+          "display": "aandoening van hart in familieanamnese"
+        }
+      ],
+      "direct_transition": "VG5"
+    },
+    "VG2": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Hartaandoening",
+          "distribution": 0.1
+        },
+        {
+          "transition": "VG3",
+          "distribution": 0.9
+        }
+      ]
+    },
+    "VG1": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Diabetes",
+          "distribution": 0.1
+        },
+        {
+          "transition": "VG2",
+          "distribution": 0.9
+        }
+      ]
+    },
+    "VG3": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Hartoperatie",
+          "distribution": 0.1
+        },
+        {
+          "transition": "VG4",
+          "distribution": 0.9
+        }
+      ]
+    },
+    "VG4": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Hartaandoening in familie",
+          "distribution": 0.1
+        },
+        {
+          "transition": "VG5",
+          "distribution": 0.9
+        }
+      ]
+    },
+    "VG5": {
+      "type": "Simple",
+      "direct_transition": "Terminal"
+    }
+  }
+}

@@ -1,0 +1,39 @@
+{
+  "name": "HartNet_Asma",
+  "states": {
+    "Initial": {
+      "type": "Initial",
+      "direct_transition": "Check DM"
+    },
+    "Terminal": {
+      "type": "Terminal"
+    },
+    "Check DM": {
+      "type": "Guard",
+      "allow": {
+        "condition_type": "Active Condition",
+        "codes": [
+          {
+            "system": "SNOMED-CT",
+            "code": 73211009,
+            "display": "diabetes melitus"
+          }
+        ]
+      },
+      "direct_transition": "Astma"
+    },
+    "Astma": {
+      "type": "ConditionOnset",
+      "assign_to_attribute": "",
+      "target_encounter": "",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": 195967001,
+          "display": "astma"
+        }
+      ],
+      "direct_transition": "Terminal"
+    }
+  }
+}
