@@ -1,0 +1,295 @@
+{
+  "name": "CHF TAVI",
+  "remarks": [
+    "REFERENCES",
+    "This module was built based on the following references:",
+    "1. the existing synthea congestive_heartfailure_module",
+    "2. https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5494150/",
+    "3. https://www.acc.org/tools-and-practice-support/clinical-toolkits/~/media/1E4D8F9B69D14F55821BFE642FBFA221.ashx",
+    "4. https://r.details.loinc.org/LOINC/55405-5.html?sections=Comprehensive",
+    "5. https://www.nbt.nhs.uk/sites/default/files/BNP%20fact%20sheet.pdf",
+    "6. https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4254520/",
+    "7. http://heartfailure.onlinejacc.org/content/jhf/2/3/278.full.pdf",
+    "8. https://www.ahajournals.org/doi/full/10.1161/JAHA.117.007569",
+    "",
+    "GOALS",
+    "- Simulate entire lifecycle of HF from onset to death",
+    "- Simulate disease progression through NYHA II-IV",
+    "- Include telemedicine (remote monitoring)",
+    "",
+    "LIMITATIONS",
+    "- Age-specific prevalences are based on numbers from Portugal",
+    "",
+    "IN PROGRESS",
+    "- EF observations",
+    "- Reporting on imaging procedures",
+    "- Implement full LOINC heart failure tracking panel",
+    "",
+    "",
+    "TODO:",
+    "- NYHA classification",
+    "- Adopt medications to severity",
+    "- send patients to observation unit ([6])",
+    "- Better modelling of mortality (e.g. clustered ED visits [8])",
+    "- What is a documented probability of acute exacerbations per 6 months? 1% was too low. But what is good number?"
+  ],
+  "states": {
+    "Initial": {
+      "type": "Initial",
+      "direct_transition": "Age Guard"
+    },
+    "Record_MetabolicPanel": {
+      "type": "DiagnosticReport",
+      "codes": [
+        {
+          "system": "LOINC",
+          "code": "51990-0",
+          "display": "Basic Metabolic Panel"
+        }
+      ],
+      "observations": [
+        {
+          "category": "laboratory",
+          "vital_sign": "Glucose",
+          "codes": [
+            {
+              "system": "LOINC",
+              "code": "2339-0",
+              "display": "Glucose"
+            }
+          ],
+          "unit": "mg/dL"
+        },
+        {
+          "category": "laboratory",
+          "vital_sign": "Urea Nitrogen",
+          "codes": [
+            {
+              "system": "LOINC",
+              "code": "6299-2",
+              "display": "Urea Nitrogen"
+            }
+          ],
+          "unit": "mg/dL"
+        },
+        {
+          "category": "laboratory",
+          "vital_sign": "Creatinine",
+          "codes": [
+            {
+              "system": "LOINC",
+              "code": "38483-4",
+              "display": "Creatinine"
+            }
+          ],
+          "unit": "mg/dL"
+        },
+        {
+          "category": "laboratory",
+          "vital_sign": "Calcium",
+          "codes": [
+            {
+              "system": "LOINC",
+              "code": "49765-1",
+              "display": "Calcium"
+            }
+          ],
+          "unit": "mg/dL"
+        },
+        {
+          "category": "laboratory",
+          "vital_sign": "Sodium",
+          "codes": [
+            {
+              "system": "LOINC",
+              "code": "2947-0",
+              "display": "Sodium"
+            }
+          ],
+          "unit": "mmol/L"
+        },
+        {
+          "category": "laboratory",
+          "vital_sign": "Potassium",
+          "codes": [
+            {
+              "system": "LOINC",
+              "code": "6298-4",
+              "display": "Potassium"
+            }
+          ],
+          "unit": "mmol/L"
+        },
+        {
+          "category": "laboratory",
+          "vital_sign": "Chloride",
+          "codes": [
+            {
+              "system": "LOINC",
+              "code": "2069-3",
+              "display": "Chloride"
+            }
+          ],
+          "unit": "mmol/L"
+        },
+        {
+          "category": "laboratory",
+          "vital_sign": "Carbon Dioxide",
+          "codes": [
+            {
+              "system": "LOINC",
+              "code": "20565-8",
+              "display": "Carbon Dioxide"
+            }
+          ],
+          "unit": "mmol/L"
+        }
+      ]
+    },
+    "chance of CHF": {
+      "type": "Delay",
+      "exact": {
+        "quantity": 1,
+        "unit": "years"
+      },
+      "conditional_transition": [
+        {
+          "transition": "Age_80-Chance of CHF",
+          "condition": {
+            "condition_type": "Age",
+            "operator": ">",
+            "quantity": 80,
+            "unit": "years"
+          }
+        },
+        {
+          "transition": "Age_70-79-Chance of CHF",
+          "condition": {
+            "condition_type": "Age",
+            "operator": ">",
+            "quantity": 70,
+            "unit": "years"
+          }
+        },
+        {
+          "transition": "Age_60-69-Chance of CHF",
+          "condition": {
+            "condition_type": "Age",
+            "operator": ">",
+            "quantity": 60,
+            "unit": "years"
+          }
+        },
+        {
+          "transition": "Age_50-59-Chance of CHF"
+        }
+      ]
+    },
+    "Age Guard": {
+      "type": "Guard",
+      "allow": {
+        "condition_type": "Age",
+        "operator": ">",
+        "quantity": 50,
+        "unit": "years"
+      },
+      "direct_transition": "chance of CHF"
+    },
+    "Age_50-59-Chance of CHF": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "CHF onset",
+          "distribution": 0.003
+        },
+        {
+          "transition": "chance of CHF",
+          "distribution": 0.9970000000000001
+        }
+      ]
+    },
+    "Age_60-69-Chance of CHF": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "CHF onset",
+          "distribution": 0.008
+        },
+        {
+          "transition": "chance of CHF",
+          "distribution": 0.992
+        }
+      ]
+    },
+    "Age_70-79-Chance of CHF": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "CHF onset",
+          "distribution": 0.013
+        },
+        {
+          "transition": "chance of CHF",
+          "distribution": 0.9870000000000001
+        }
+      ]
+    },
+    "Age_80-Chance of CHF": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "CHF onset",
+          "distribution": 0.02
+        },
+        {
+          "transition": "chance of CHF",
+          "distribution": 0.98
+        }
+      ]
+    },
+    "CHF onset": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Dyspneu",
+          "distribution": 0.5
+        },
+        {
+          "transition": "Familieamnese",
+          "distribution": 0.5
+        }
+      ]
+    },
+    "NTproBNP lab workup": {
+      "type": "Observation",
+      "category": "laboratory",
+      "unit": "pg/mL",
+      "codes": [
+        {
+          "system": "LOINC",
+          "code": "33762-6",
+          "display": "NT-proBNP"
+        }
+      ],
+      "direct_transition": "Record_MetabolicPanel",
+      "range": {
+        "low": 200,
+        "high": 2000
+      }
+    },
+    "Terminal": {
+      "type": "Terminal"
+    },
+    "Dyspneu": {
+      "type": "Simple"
+    },
+    "Familieamnese": {
+      "type": "Simple",
+      "direct_transition": "Familieamnese"
+    },
+    "ECG": {
+      "type": "Simple",
+      "direct_transition": "NTproBNP lab workup"
+    }
+  }
+}
