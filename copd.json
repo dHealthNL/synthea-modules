@@ -92,8 +92,7 @@
         "the key cause of both variants of COPD is smoking. ",
         "15-20% of 1pack/day smokers develop COPD, 25% of 2 pack/day",
         "http://emedicine.medscape.com/article/298283-overview",
-        "we assume that roughly 20% of smokers will get COPD in their lifetime",
-        "we break this down further by Socioeconomic status"
+        "we assume that roughly 20% of smokers will get COPD in their lifetime"
       ],
       "distributed_transition": [
         {

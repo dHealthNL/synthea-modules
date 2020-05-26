@@ -1,0 +1,402 @@
+{
+  "name": "HartNet COPD",
+  "remarks": [
+    "A blank module"
+  ],
+  "states": {
+    "Initial": {
+      "type": "Guard",
+      "allow": {
+        "condition_type": "Age",
+        "operator": ">",
+        "quantity": 18,
+        "unit": "years"
+      },
+      "direct_transition": "Delay 1 yr"
+    },
+    "Delay 1 yr": {
+      "type": "Delay",
+      "exact": {
+        "quantity": 1,
+        "unit": "years"
+      },
+      "direct_transition": "Set Smoker"
+    },
+    "Regular GP Encounter": {
+      "type": "Encounter",
+      "reason": "",
+      "direct_transition": "FEV Test",
+      "wellness": true
+    },
+    "FEV Test": {
+      "type": "Procedure",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": 127783003,
+          "display": "Spirometry"
+        }
+      ],
+      "duration": {
+        "low": 30,
+        "high": 30,
+        "unit": "minutes"
+      },
+      "direct_transition": "FEV Result"
+    },
+    "FEV Result": {
+      "type": "Observation",
+      "category": "procedure",
+      "unit": "%",
+      "codes": [
+        {
+          "system": "LOINC",
+          "code": "19926-5",
+          "display": "FEV1/FVC"
+        }
+      ],
+      "range": {
+        "low": 47,
+        "high": 81
+      },
+      "conditional_transition": [
+        {
+          "transition": "Smoker CarePlan",
+          "condition": {
+            "condition_type": "Attribute",
+            "attribute": "smoker",
+            "operator": "==",
+            "value": 1
+          }
+        },
+        {
+          "transition": "Non Smoker CarePlan",
+          "condition": {
+            "condition_type": "Attribute",
+            "attribute": "smoker",
+            "operator": "==",
+            "value": 0
+          }
+        }
+      ]
+    },
+    "Smoker CarePlan": {
+      "type": "CarePlanStart",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": 412776001,
+          "display": "COPD Clinical Management Plan"
+        }
+      ],
+      "activities": [
+        {
+          "system": "SNOMED-CT",
+          "code": 710081004,
+          "display": "Smoking cessation"
+        },
+        {
+          "system": "SNOMED-CT",
+          "code": 426990007,
+          "display": "Home O2"
+        }
+      ],
+      "distributed_transition": [
+        {
+          "transition": "Emphesema",
+          "distribution": 0.0291
+        },
+        {
+          "transition": "Chronic Bronchitis",
+          "distribution": 0.008
+        },
+        {
+          "transition": "Terminal",
+          "distribution": 0.9629000000000001
+        }
+      ]
+    },
+    "Non Smoker CarePlan": {
+      "type": "CarePlanStart",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": 412776001,
+          "display": "COPD Clinical Management Plan"
+        }
+      ],
+      "activities": [
+        {
+          "system": "SNOMED-CT",
+          "code": 229065009,
+          "display": "Exercise Therapy"
+        },
+        {
+          "system": "SNOMED-CT",
+          "code": 15081005,
+          "display": "Pulm. Rehab."
+        }
+      ],
+      "distributed_transition": [
+        {
+          "transition": "Emphesema",
+          "distribution": 0.0291
+        },
+        {
+          "transition": "Chronic Bronchitis",
+          "distribution": 0.008
+        },
+        {
+          "transition": "Terminal",
+          "distribution": 0.9629000000000001
+        }
+      ]
+    },
+    "Terminal": {
+      "type": "Terminal"
+    },
+    "Set Smoker": {
+      "type": "SetAttribute",
+      "attribute": "smoker",
+      "direct_transition": "Regular GP Encounter",
+      "range": {
+        "low": 0,
+        "high": 1
+      }
+    },
+    "Emphesema": {
+      "type": "ConditionOnset",
+      "assign_to_attribute": "",
+      "target_encounter": "",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": 87433001,
+          "display": "Emphesema"
+        }
+      ],
+      "direct_transition": "Shortness of Breath Symptom"
+    },
+    "Chronic Bronchitis": {
+      "type": "ConditionOnset",
+      "assign_to_attribute": "",
+      "target_encounter": "",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": 185086009,
+          "display": "Chronic Bronchitis"
+        }
+      ],
+      "direct_transition": "Shortness of Breath Symptom"
+    },
+    "Common Symptom": {
+      "type": "Symptom",
+      "symptom": "Cough",
+      "cause": "",
+      "probability": 1,
+      "exact": {
+        "quantity": 1
+      },
+      "direct_transition": "Living with COPD"
+    },
+    "Shortness of Breath Symptom": {
+      "type": "Symptom",
+      "symptom": "Shortness of Breath",
+      "cause": "",
+      "probability": 1,
+      "exact": {
+        "quantity": 1
+      },
+      "direct_transition": "Common Symptom"
+    },
+    "Living with COPD": {
+      "type": "ConditionOnset",
+      "assign_to_attribute": "",
+      "target_encounter": "",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": 13645005,
+          "display": "Chronic obstructive lung disease"
+        }
+      ],
+      "direct_transition": "Scharnierconsult"
+    },
+    "Scharnierconsult": {
+      "type": "Encounter",
+      "reason": "",
+      "direct_transition": "Ziektelastmeter",
+      "wellness": true
+    },
+    "Ziektelastmeter": {
+      "type": "Observation",
+      "category": "vital-signs",
+      "unit": "",
+      "codes": [
+        {
+          "system": "LOINC",
+          "code": "1234",
+          "display": "LOINC Code"
+        }
+      ],
+      "exact": {
+        "quantity": 1
+      },
+      "direct_transition": "Follow-up FEV Test"
+    },
+    "Follow-up FEV Test": {
+      "type": "Procedure",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": 127783003,
+          "display": "Spirometry"
+        }
+      ],
+      "duration": {
+        "low": 30,
+        "high": 30,
+        "unit": "minutes"
+      },
+      "distributed_transition": [
+        {
+          "transition": "Stage 4 Result",
+          "distribution": 0.03
+        },
+        {
+          "transition": "Stage 3 Result",
+          "distribution": 0.15
+        },
+        {
+          "transition": "Stage 2 Result",
+          "distribution": 0.54
+        },
+        {
+          "transition": "Stage 1 Result",
+          "distribution": 0.28
+        }
+      ]
+    },
+    "Stage 4 Result": {
+      "type": "Observation",
+      "category": "procedure",
+      "unit": "%",
+      "codes": [
+        {
+          "system": "LOINC",
+          "code": "19926-5",
+          "display": ""
+        }
+      ],
+      "direct_transition": "Stage 4 Condition",
+      "range": {
+        "low": 0,
+        "high": 30
+      }
+    },
+    "Stage 3 Result": {
+      "type": "Observation",
+      "category": "vital-signs",
+      "unit": "%",
+      "codes": [
+        {
+          "system": "LOINC",
+          "code": "19926-5",
+          "display": ""
+        }
+      ],
+      "direct_transition": "Stage 3 Condition",
+      "range": {
+        "low": 30,
+        "high": 49
+      }
+    },
+    "Stage 2 Result": {
+      "type": "Observation",
+      "category": "procedure",
+      "unit": "%",
+      "codes": [
+        {
+          "system": "LOINC",
+          "code": "19926-5",
+          "display": ""
+        }
+      ],
+      "direct_transition": "Stage 2 Condition",
+      "range": {
+        "low": 50,
+        "high": 70
+      }
+    },
+    "Stage 1 Result": {
+      "type": "Observation",
+      "category": "procedure",
+      "unit": "%",
+      "codes": [
+        {
+          "system": "LOINC",
+          "code": "19926-5",
+          "display": ""
+        }
+      ],
+      "direct_transition": "Stage 1 Condition",
+      "range": {
+        "low": 80,
+        "high": 100
+      }
+    },
+    "Stage 1 Condition": {
+      "type": "ConditionOnset",
+      "assign_to_attribute": "",
+      "target_encounter": "",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": 313296004,
+          "display": "milde chronische obstructieve longaandoening"
+        }
+      ],
+      "direct_transition": "Terminal"
+    },
+    "Stage 2 Condition": {
+      "type": "ConditionOnset",
+      "assign_to_attribute": "",
+      "target_encounter": "",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": 313297008,
+          "display": "matige chronische obstructieve longziekte"
+        }
+      ],
+      "direct_transition": "Terminal"
+    },
+    "Stage 4 Condition": {
+      "type": "ConditionOnset",
+      "assign_to_attribute": "",
+      "target_encounter": "",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": 135836000,
+          "display": "terminale chronische obstructieve longziekte"
+        }
+      ],
+      "direct_transition": "Terminal"
+    },
+    "Stage 3 Condition": {
+      "type": "ConditionOnset",
+      "assign_to_attribute": "",
+      "target_encounter": "",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": 313299006,
+          "display": "ernstige chronische obstructieve longziekte"
+        }
+      ],
+      "direct_transition": "Terminal"
+    }
+  }
+}
