@@ -221,7 +221,16 @@
           "display": "Chronic obstructive lung disease"
         }
       ],
-      "direct_transition": "Scharnierconsult"
+      "distributed_transition": [
+        {
+          "transition": "Overleden",
+          "distribution": 0.23
+        },
+        {
+          "transition": "Scharnierconsult",
+          "distribution": 0.77
+        }
+      ]
     },
     "Scharnierconsult": {
       "type": "Encounter",
@@ -232,18 +241,19 @@
     "Ziektelastmeter": {
       "type": "Observation",
       "category": "vital-signs",
-      "unit": "",
+      "unit": "points",
       "codes": [
         {
           "system": "LOINC",
-          "code": "1234",
-          "display": "LOINC Code"
+          "code": "",
+          "display": "Ziektelastmeter"
         }
       ],
-      "exact": {
-        "quantity": 1
-      },
-      "direct_transition": "Follow-up FEV Test"
+      "direct_transition": "Follow-up FEV Test",
+      "range": {
+        "low": 0,
+        "high": 100
+      }
     },
     "Follow-up FEV Test": {
       "type": "Procedure",
@@ -357,7 +367,7 @@
           "display": "milde chronische obstructieve longaandoening"
         }
       ],
-      "direct_transition": "Terminal"
+      "direct_transition": "Klachtmanagement"
     },
     "Stage 2 Condition": {
       "type": "ConditionOnset",
@@ -370,7 +380,7 @@
           "display": "matige chronische obstructieve longziekte"
         }
       ],
-      "direct_transition": "Terminal"
+      "direct_transition": "Check Medicatie"
     },
     "Stage 4 Condition": {
       "type": "ConditionOnset",
@@ -383,7 +393,7 @@
           "display": "terminale chronische obstructieve longziekte"
         }
       ],
-      "direct_transition": "Terminal"
+      "direct_transition": "Pulmonary Rehab"
     },
     "Stage 3 Condition": {
       "type": "ConditionOnset",
@@ -396,7 +406,131 @@
           "display": "ernstige chronische obstructieve longziekte"
         }
       ],
-      "direct_transition": "Terminal"
+      "direct_transition": "Check Medicatie"
+    },
+    "Klachtmanagement": {
+      "type": "Simple",
+      "direct_transition": "Living with COPD"
+    },
+    "Pulmonary Rehab": {
+      "type": "Procedure",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": 15081005,
+          "display": "Pulmonary Rehab"
+        }
+      ],
+      "duration": {
+        "low": 30,
+        "high": 30,
+        "unit": "minutes"
+      },
+      "direct_transition": "Check Medicatie"
+    },
+    "Check Medicatie": {
+      "type": "Simple",
+      "direct_transition": "Prescribe Medicatie"
+    },
+    "Overleden": {
+      "type": "Death"
+    },
+    "Prescribe Medicatie": {
+      "type": "MedicationOrder",
+      "codes": [
+        {
+          "system": "G-standard",
+          "code": "",
+          "display": "ipratropium"
+        },
+        {
+          "system": "G-standard",
+          "code": "1",
+          "display": "beta-2-sympaticomimeticum"
+        }
+      ],
+      "direct_transition": "Opereren?"
+    },
+    "Opereren?": {
+      "type": "Simple",
+      "direct_transition": "Wachtrij operatie"
+    },
+    "Wachtrij operatie": {
+      "type": "Delay",
+      "direct_transition": "Opereren",
+      "range": {
+        "low": 6,
+        "high": 12,
+        "unit": "weeks"
+      }
+    },
+    "Opereren": {
+      "type": "Encounter",
+      "encounter_class": "inpatient",
+      "reason": "",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": 305411003,
+          "display": ""
+        }
+      ],
+      "conditional_transition": [
+        {
+          "transition": "Long operatie",
+          "condition": {
+            "condition_type": "Observation",
+            "codes": [
+              {
+                "system": "LOINC",
+                "code": "19926-5",
+                "display": "FEV1/FVC"
+              }
+            ],
+            "operator": ">=",
+            "value": 20
+          }
+        },
+        {
+          "transition": "Transplantatie operatie"
+        }
+      ]
+    },
+    "Einde operatie": {
+      "type": "EncounterEnd",
+      "direct_transition": "Living with COPD"
+    },
+    "Transplantatie operatie": {
+      "type": "Procedure",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": 88039007,
+          "display": "Long transplantatie"
+        }
+      ],
+      "duration": {
+        "low": 5,
+        "high": 7,
+        "unit": "hours"
+      },
+      "direct_transition": "Einde operatie"
+    },
+    "Long operatie": {
+      "type": "Procedure",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": 429609002,
+          "display": "Long volume reductie"
+        }
+      ],
+      "duration": {
+        "low": 30,
+        "high": 30,
+        "unit": "minutes"
+      },
+      "direct_transition": "Einde operatie"
     }
   }
 }
