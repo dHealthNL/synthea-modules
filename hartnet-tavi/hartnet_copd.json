@@ -54,6 +54,7 @@
         }
       ],
       "range": {
+        "decimals": 0,
         "low": 47,
         "high": 81
       },
@@ -164,7 +165,7 @@
           "display": "Emphesema"
         }
       ],
-      "direct_transition": "Shortness of Breath Symptom"
+      "direct_transition": "Symptom hoesten"
     },
     "Chronic Bronchitis": {
       "type": "ConditionOnset",
@@ -177,27 +178,7 @@
           "display": "Chronic Bronchitis"
         }
       ],
-      "direct_transition": "Shortness of Breath Symptom"
-    },
-    "Common Symptom": {
-      "type": "Symptom",
-      "symptom": "Cough",
-      "cause": "",
-      "probability": 1,
-      "exact": {
-        "quantity": 1
-      },
-      "direct_transition": "Diagnose COPD"
-    },
-    "Shortness of Breath Symptom": {
-      "type": "Symptom",
-      "symptom": "Shortness of Breath",
-      "cause": "",
-      "probability": 1,
-      "exact": {
-        "quantity": 1
-      },
-      "direct_transition": "Common Symptom"
+      "direct_transition": "Symptom hoesten"
     },
     "Living with COPD": {
       "type": "Simple",
@@ -588,6 +569,42 @@
       "type": "ConditionEnd",
       "direct_transition": "Ziektelastmeter",
       "condition_onset": "Stage 4 Condition"
+    },
+    "Symptom hoesten": {
+      "type": "Observation",
+      "category": "exam",
+      "unit": "",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": 418799008,
+          "display": "symptoom"
+        }
+      ],
+      "direct_transition": "Symptom dyspneu",
+      "value_code": {
+        "system": "SNOMED-CT",
+        "code": 49727002,
+        "display": "hoesten"
+      }
+    },
+    "Symptom dyspneu": {
+      "type": "Observation",
+      "category": "exam",
+      "unit": "",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": 418799008,
+          "display": "symptoom"
+        }
+      ],
+      "direct_transition": "Diagnose COPD",
+      "value_code": {
+        "system": "SNOMED-CT",
+        "code": 267036007,
+        "display": "dyspneu"
+      }
     }
   }
 }
