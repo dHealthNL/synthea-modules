@@ -12,21 +12,19 @@
         "quantity": 18,
         "unit": "years"
       },
-      "direct_transition": "Delay 1 yr"
-    },
-    "Delay 1 yr": {
-      "type": "Delay",
-      "exact": {
-        "quantity": 1,
-        "unit": "years"
-      },
-      "direct_transition": "Set Smoker"
+      "direct_transition": "Delay GP Visit"
     },
     "Regular GP Encounter": {
       "type": "Encounter",
       "reason": "",
       "direct_transition": "FEV Test",
-      "wellness": true
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": "1234",
+          "display": "COPD vermoeden"
+        }
+      ]
     },
     "FEV Test": {
       "type": "Procedure",
@@ -46,7 +44,7 @@
     },
     "FEV Result": {
       "type": "Observation",
-      "category": "procedure",
+      "category": "vital-signs",
       "unit": "%",
       "codes": [
         {
@@ -66,7 +64,7 @@
             "condition_type": "Attribute",
             "attribute": "smoker",
             "operator": "==",
-            "value": 1
+            "value": true
           }
         },
         {
@@ -75,7 +73,7 @@
             "condition_type": "Attribute",
             "attribute": "smoker",
             "operator": "==",
-            "value": 0
+            "value": false
           }
         }
       ]
@@ -104,15 +102,15 @@
       "distributed_transition": [
         {
           "transition": "Emphesema",
-          "distribution": 0.0291
+          "distribution": 0.8
         },
         {
           "transition": "Chronic Bronchitis",
-          "distribution": 0.008
+          "distribution": 0.2
         },
         {
           "transition": "Terminal",
-          "distribution": 0.9629000000000001
+          "distribution": 0
         }
       ]
     },
@@ -140,34 +138,25 @@
       "distributed_transition": [
         {
           "transition": "Emphesema",
-          "distribution": 0.0291
+          "distribution": 0.29
         },
         {
           "transition": "Chronic Bronchitis",
-          "distribution": 0.008
+          "distribution": 0.08
         },
         {
           "transition": "Terminal",
-          "distribution": 0.9629000000000001
+          "distribution": 0.63
         }
       ]
     },
     "Terminal": {
       "type": "Terminal"
     },
-    "Set Smoker": {
-      "type": "SetAttribute",
-      "attribute": "smoker",
-      "direct_transition": "Regular GP Encounter",
-      "range": {
-        "low": 0,
-        "high": 1
-      }
-    },
     "Emphesema": {
       "type": "ConditionOnset",
       "assign_to_attribute": "",
-      "target_encounter": "",
+      "target_encounter": "Regular GP Encounter",
       "codes": [
         {
           "system": "SNOMED-CT",
@@ -180,7 +169,7 @@
     "Chronic Bronchitis": {
       "type": "ConditionOnset",
       "assign_to_attribute": "",
-      "target_encounter": "",
+      "target_encounter": "Regular GP Encounter",
       "codes": [
         {
           "system": "SNOMED-CT",
@@ -198,7 +187,7 @@
       "exact": {
         "quantity": 1
       },
-      "direct_transition": "Living with COPD"
+      "direct_transition": "Diagnose COPD"
     },
     "Shortness of Breath Symptom": {
       "type": "Symptom",
@@ -211,23 +200,14 @@
       "direct_transition": "Common Symptom"
     },
     "Living with COPD": {
-      "type": "ConditionOnset",
-      "assign_to_attribute": "",
-      "target_encounter": "",
-      "codes": [
-        {
-          "system": "SNOMED-CT",
-          "code": 13645005,
-          "display": "Chronic obstructive lung disease"
-        }
-      ],
+      "type": "Simple",
       "distributed_transition": [
         {
           "transition": "Overleden",
           "distribution": 0.23
         },
         {
-          "transition": "Scharnierconsult",
+          "transition": "Wachttijd voor scharnierconsult",
           "distribution": 0.77
         }
       ]
@@ -235,13 +215,19 @@
     "Scharnierconsult": {
       "type": "Encounter",
       "reason": "",
-      "direct_transition": "Ziektelastmeter",
-      "wellness": true
+      "direct_transition": "Stoppen generieke diagnose",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": "1234",
+          "display": "Scharnierconsult"
+        }
+      ]
     },
     "Ziektelastmeter": {
       "type": "Observation",
       "category": "vital-signs",
-      "unit": "points",
+      "unit": "{score}",
       "codes": [
         {
           "system": "LOINC",
@@ -251,6 +237,7 @@
       ],
       "direct_transition": "Follow-up FEV Test",
       "range": {
+        "decimals": 0,
         "low": 0,
         "high": 100
       }
@@ -290,17 +277,18 @@
     },
     "Stage 4 Result": {
       "type": "Observation",
-      "category": "procedure",
+      "category": "vital-signs",
       "unit": "%",
       "codes": [
         {
           "system": "LOINC",
           "code": "19926-5",
-          "display": ""
+          "display": "FEV1/FVC"
         }
       ],
       "direct_transition": "Stage 4 Condition",
       "range": {
+        "decimals": 0,
         "low": 0,
         "high": 30
       }
@@ -313,45 +301,48 @@
         {
           "system": "LOINC",
           "code": "19926-5",
-          "display": ""
+          "display": "FEV1/FVC"
         }
       ],
       "direct_transition": "Stage 3 Condition",
       "range": {
+        "decimals": 0,
         "low": 30,
         "high": 49
       }
     },
     "Stage 2 Result": {
       "type": "Observation",
-      "category": "procedure",
+      "category": "vital-signs",
       "unit": "%",
       "codes": [
         {
           "system": "LOINC",
           "code": "19926-5",
-          "display": ""
+          "display": "FEV1/FVC"
         }
       ],
       "direct_transition": "Stage 2 Condition",
       "range": {
+        "decimals": 0,
         "low": 50,
         "high": 70
       }
     },
     "Stage 1 Result": {
       "type": "Observation",
-      "category": "procedure",
+      "category": "vital-signs",
       "unit": "%",
       "codes": [
         {
           "system": "LOINC",
           "code": "19926-5",
-          "display": ""
+          "display": "FEV1/FVC"
         }
       ],
       "direct_transition": "Stage 1 Condition",
       "range": {
+        "decimals": 0,
         "low": 80,
         "high": 100
       }
@@ -359,7 +350,7 @@
     "Stage 1 Condition": {
       "type": "ConditionOnset",
       "assign_to_attribute": "",
-      "target_encounter": "",
+      "target_encounter": "Scharnierconsult",
       "codes": [
         {
           "system": "SNOMED-CT",
@@ -372,7 +363,7 @@
     "Stage 2 Condition": {
       "type": "ConditionOnset",
       "assign_to_attribute": "",
-      "target_encounter": "",
+      "target_encounter": "Scharnierconsult",
       "codes": [
         {
           "system": "SNOMED-CT",
@@ -385,7 +376,7 @@
     "Stage 4 Condition": {
       "type": "ConditionOnset",
       "assign_to_attribute": "",
-      "target_encounter": "",
+      "target_encounter": "Scharnierconsult",
       "codes": [
         {
           "system": "SNOMED-CT",
@@ -398,7 +389,7 @@
     "Stage 3 Condition": {
       "type": "ConditionOnset",
       "assign_to_attribute": "",
-      "target_encounter": "",
+      "target_encounter": "Scharnierconsult",
       "codes": [
         {
           "system": "SNOMED-CT",
@@ -433,7 +424,8 @@
       "direct_transition": "Prescribe Medicatie"
     },
     "Overleden": {
-      "type": "Death"
+      "type": "Death",
+      "direct_transition": "Terminal"
     },
     "Prescribe Medicatie": {
       "type": "MedicationOrder",
@@ -445,15 +437,24 @@
         },
         {
           "system": "G-standard",
-          "code": "1",
+          "code": "",
           "display": "beta-2-sympaticomimeticum"
         }
       ],
-      "direct_transition": "Opereren?"
+      "direct_transition": "Gaan we Opereren"
     },
-    "Opereren?": {
+    "Gaan we Opereren": {
       "type": "Simple",
-      "direct_transition": "Wachtrij operatie"
+      "distributed_transition": [
+        {
+          "transition": "Wachtrij operatie",
+          "distribution": 0.5
+        },
+        {
+          "transition": "Living with COPD",
+          "distribution": 0.5
+        }
+      ]
     },
     "Wachtrij operatie": {
       "type": "Delay",
@@ -488,7 +489,7 @@
               }
             ],
             "operator": ">=",
-            "value": 20
+            "value": 40
           }
         },
         {
@@ -531,6 +532,62 @@
         "unit": "minutes"
       },
       "direct_transition": "Einde operatie"
+    },
+    "Wachttijd voor scharnierconsult": {
+      "type": "Delay",
+      "direct_transition": "Scharnierconsult",
+      "range": {
+        "low": 1,
+        "high": 10,
+        "unit": "weeks"
+      }
+    },
+    "Diagnose COPD": {
+      "type": "ConditionOnset",
+      "assign_to_attribute": "",
+      "target_encounter": "Regular GP Encounter",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": 13645005,
+          "display": "Chronic obstructive lung disease"
+        }
+      ],
+      "direct_transition": "Living with COPD"
+    },
+    "Delay GP Visit": {
+      "type": "Delay",
+      "direct_transition": "Regular GP Encounter",
+      "range": {
+        "low": 1,
+        "high": 40,
+        "unit": "years"
+      }
+    },
+    "Stoppen generieke diagnose": {
+      "type": "ConditionEnd",
+      "direct_transition": "Stop stage1",
+      "condition_onset": "Diagnose COPD"
+    },
+    "Stop stage1": {
+      "type": "ConditionEnd",
+      "direct_transition": "Stop stage2",
+      "condition_onset": "Stage 1 Condition"
+    },
+    "Stop stage2": {
+      "type": "ConditionEnd",
+      "direct_transition": "Stop stage3",
+      "condition_onset": "Stage 2 Condition"
+    },
+    "Stop stage3": {
+      "type": "ConditionEnd",
+      "direct_transition": "Stop stage4",
+      "condition_onset": "Stage 3 Condition"
+    },
+    "Stop stage4": {
+      "type": "ConditionEnd",
+      "direct_transition": "Ziektelastmeter",
+      "condition_onset": "Stage 4 Condition"
     }
   }
 }

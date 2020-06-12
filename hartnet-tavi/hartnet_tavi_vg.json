@@ -6,17 +6,7 @@
   "states": {
     "Initial": {
       "type": "Initial",
-      "conditional_transition": [
-        {
-          "transition": "VG1",
-          "condition": {
-            "condition_type": "Age",
-            "operator": ">",
-            "quantity": 45,
-            "unit": "years"
-          }
-        }
-      ]
+      "direct_transition": "OuderDan45"
     },
     "Terminal": {
       "type": "Terminal"
@@ -56,6 +46,11 @@
           "display": "operatie van hart"
         }
       ],
+      "duration": {
+        "low": 30,
+        "high": 30,
+        "unit": "minutes"
+      },
       "direct_transition": "VG4"
     },
     "Hartaandoening in familie": {
@@ -126,6 +121,77 @@
     "VG5": {
       "type": "Simple",
       "direct_transition": "Terminal"
+    },
+    "OuderDan45": {
+      "type": "Guard",
+      "allow": {
+        "condition_type": "Age",
+        "operator": ">",
+        "quantity": 45,
+        "unit": "years"
+      },
+      "direct_transition": "Set Smoker"
+    },
+    "Set Smoker": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Smoker",
+          "distribution": 0.2
+        },
+        {
+          "transition": "Non Smoker",
+          "distribution": 0.8
+        }
+      ]
+    },
+    "Smoker": {
+      "type": "SetAttribute",
+      "attribute": "smoker",
+      "direct_transition": "zib TabakGebruik roker",
+      "value": true
+    },
+    "Non Smoker": {
+      "type": "SetAttribute",
+      "attribute": "smoker",
+      "direct_transition": "zib TabakGebruik nooit gerookt",
+      "value": false
+    },
+    "zib TabakGebruik roker": {
+      "type": "Observation",
+      "category": "social-history",
+      "unit": "",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": 365980008,
+          "display": "Finding of tobacco use and exposure"
+        }
+      ],
+      "direct_transition": "VG1",
+      "value_code": {
+        "system": "SNOMED-CT",
+        "code": 449868002,
+        "display": "Rookt dagelijks"
+      }
+    },
+    "zib TabakGebruik nooit gerookt": {
+      "type": "Observation",
+      "category": "social-history",
+      "unit": "",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": 365980008,
+          "display": "Finding of tobacco use and exposure"
+        }
+      ],
+      "direct_transition": "VG1",
+      "value_code": {
+        "system": "SNOMED-CT",
+        "code": 266919005,
+        "display": "Nooit gerookt"
+      }
     }
   }
 }
