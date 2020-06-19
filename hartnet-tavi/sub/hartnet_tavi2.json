@@ -1,0 +1,280 @@
+{
+  "name": "HartNet TAVI2",
+  "remarks": [
+    "A blank module"
+  ],
+  "states": {
+    "Initial": {
+      "type": "Initial",
+      "direct_transition": "Hartbespreking"
+    },
+    "Terminal": {
+      "type": "Terminal"
+    },
+    "Hartbespreking": {
+      "type": "Encounter",
+      "encounter_class": "ambulatory",
+      "reason": "",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": "1234",
+          "display": "Hartbespreking"
+        }
+      ],
+      "direct_transition": "Behandelmogelijkheden"
+    },
+    "Opname": {
+      "type": "Encounter",
+      "encounter_class": "inpatient",
+      "reason": "",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": "1234",
+          "display": "Opname"
+        }
+      ],
+      "direct_transition": "POPA"
+    },
+    "POPA": {
+      "type": "Procedure",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": "1234",
+          "display": "Preoperatieve Polikliniek Anesthesie (POPA) beleid"
+        }
+      ],
+      "duration": {
+        "low": 30,
+        "high": 30,
+        "unit": "minutes"
+      },
+      "direct_transition": "Lab1"
+    },
+    "Behandelmogelijkheden": {
+      "type": "CarePlanStart",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": 312384001,
+          "display": "multidisciplinaire evaluatie (verrichting)"
+        }
+      ],
+      "activities": [
+        {
+          "system": "SNOMED-CT",
+          "code": "VT:0000074461",
+          "display": "percutaan vervangen van aortaklep"
+        },
+        {
+          "system": "SNOMED-CT",
+          "code": "VT:0000074462",
+          "display": "transapicale percutane aortaklepimplantatie"
+        },
+        {
+          "system": "SNOMED-CT",
+          "code": "VT:0000074463",
+          "display": "transaortale percutane aortaklepimplantatie"
+        }
+      ],
+      "direct_transition": "Opname"
+    },
+    "TTE": {
+      "type": "ImagingStudy",
+      "procedure_code": {
+        "system": "SNOMED-CT",
+        "code": "1234",
+        "display": "SNOMED Code"
+      },
+      "series": [
+        {
+          "body_site": {
+            "system": "SNOMED-CT",
+            "code": "1234",
+            "display": "SNOMED Code"
+          },
+          "modality": {
+            "system": "DICOM-DCM",
+            "code": "XX",
+            "display": "DICOM Modality Code"
+          },
+          "instances": [
+            {
+              "title": "Title of this image",
+              "sop_class": {
+                "system": "DICOM-SOP",
+                "code": "1.2.3.4.5.6.7.8",
+                "display": "DICOM Subject-Object Pair Code"
+              }
+            }
+          ]
+        }
+      ],
+      "direct_transition": "X-thorax"
+    },
+    "X-thorax": {
+      "type": "ImagingStudy",
+      "procedure_code": {
+        "system": "SNOMED-CT",
+        "code": "1234",
+        "display": "SNOMED Code"
+      },
+      "series": [
+        {
+          "body_site": {
+            "system": "SNOMED-CT",
+            "code": "1234",
+            "display": "SNOMED Code"
+          },
+          "modality": {
+            "system": "DICOM-DCM",
+            "code": "XX",
+            "display": "DICOM Modality Code"
+          },
+          "instances": [
+            {
+              "title": "Title of this image",
+              "sop_class": {
+                "system": "DICOM-SOP",
+                "code": "1.2.3.4.5.6.7.8",
+                "display": "DICOM Subject-Object Pair Code"
+              }
+            }
+          ]
+        }
+      ],
+      "direct_transition": "Aortaklepimplantatie"
+    },
+    "Lab1": {
+      "type": "Observation",
+      "category": "laboratory",
+      "unit": "",
+      "codes": [
+        {
+          "system": "LOINC",
+          "code": "34532-2",
+          "display": "Blood type and Indirect antibody"
+        }
+      ],
+      "exact": {
+        "quantity": 1
+      },
+      "direct_transition": "Lab2"
+    },
+    "Lab2": {
+      "type": "Observation",
+      "category": "laboratory",
+      "unit": "{INR}",
+      "codes": [
+        {
+          "system": "LOINC",
+          "code": "34714-6",
+          "display": "INR in Blood by Coagulation assay"
+        }
+      ],
+      "exact": {
+        "quantity": 1
+      },
+      "direct_transition": "TTE"
+    },
+    "Aortaklepimplantatie": {
+      "type": "Procedure",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": 773996000,
+          "display": "percutane aortaklepimplantatie (verrichting)"
+        }
+      ],
+      "duration": {
+        "low": 2,
+        "high": 4,
+        "unit": "hours"
+      },
+      "direct_transition": "New_State"
+    },
+    "Post Poli 2de lijn": {
+      "type": "Encounter",
+      "encounter_class": "ambulatory",
+      "reason": "",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": "1234",
+          "display": "Post Poli 2de lijn"
+        }
+      ],
+      "distributed_transition": [
+        {
+          "transition": "Terminal",
+          "distribution": 0.8939999999999999
+        },
+        {
+          "transition": "Death",
+          "distribution": 0.106
+        }
+      ]
+    },
+    "Post Poli 3de lijn": {
+      "type": "Encounter",
+      "encounter_class": "ambulatory",
+      "reason": "",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": "1234",
+          "display": "Post Poli 3de lijn"
+        }
+      ],
+      "distributed_transition": [
+        {
+          "transition": "12 mnd",
+          "distribution": 0.9279999999999999
+        },
+        {
+          "transition": "Death",
+          "distribution": 0.072
+        }
+      ]
+    },
+    "Death": {
+      "type": "Death",
+      "exact": {
+        "quantity": 1,
+        "unit": "days"
+      },
+      "direct_transition": "Terminal"
+    },
+    "1 mnd": {
+      "type": "Delay",
+      "exact": {
+        "quantity": 1,
+        "unit": "months"
+      },
+      "direct_transition": "Post Poli 3de lijn"
+    },
+    "12 mnd": {
+      "type": "Delay",
+      "exact": {
+        "quantity": 3,
+        "unit": "months"
+      },
+      "direct_transition": "Post Poli 2de lijn"
+    },
+    "New_State": {
+      "type": "EncounterEnd",
+      "distributed_transition": [
+        {
+          "transition": "1 mnd",
+          "distribution": 0.9730000000000001
+        },
+        {
+          "transition": "Death",
+          "distribution": 0.027
+        }
+      ]
+    }
+  }
+}
