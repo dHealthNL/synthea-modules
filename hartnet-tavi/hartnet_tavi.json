@@ -57,7 +57,7 @@
     },
     "Beslis": {
       "type": "EncounterEnd",
-      "direct_transition": "Contact 2e lijn"
+      "direct_transition": "Wachttijd 2de lijn"
     },
     "Diagnose": {
       "type": "ConditionOnset",
@@ -141,6 +141,15 @@
       "type": "CallSubmodule",
       "submodule": "sub/hartnet_tavi2",
       "direct_transition": "Terminal"
+    },
+    "Wachttijd 2de lijn": {
+      "type": "Delay",
+      "direct_transition": "Contact 2e lijn",
+      "range": {
+        "low": 7,
+        "high": 14,
+        "unit": "days"
+      }
     }
   }
 }

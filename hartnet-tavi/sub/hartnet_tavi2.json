@@ -79,14 +79,14 @@
           "display": "transaortale percutane aortaklepimplantatie"
         }
       ],
-      "direct_transition": "Opname"
+      "direct_transition": "Wachttijd opname"
     },
     "TTE": {
       "type": "ImagingStudy",
       "procedure_code": {
         "system": "SNOMED-CT",
         "code": "1234",
-        "display": "SNOMED Code"
+        "display": "TTE"
       },
       "series": [
         {
@@ -98,7 +98,7 @@
           "modality": {
             "system": "DICOM-DCM",
             "code": "XX",
-            "display": "DICOM Modality Code"
+            "display": "TTE"
           },
           "instances": [
             {
@@ -119,7 +119,7 @@
       "procedure_code": {
         "system": "SNOMED-CT",
         "code": "1234",
-        "display": "SNOMED Code"
+        "display": "X-thorax"
       },
       "series": [
         {
@@ -131,7 +131,7 @@
           "modality": {
             "system": "DICOM-DCM",
             "code": "XX",
-            "display": "DICOM Modality Code"
+            "display": "X-thorax"
           },
           "instances": [
             {
@@ -275,6 +275,15 @@
           "distribution": 0.027
         }
       ]
+    },
+    "Wachttijd opname": {
+      "type": "Delay",
+      "direct_transition": "Opname",
+      "range": {
+        "low": 7,
+        "high": 2,
+        "unit": "days"
+      }
     }
   }
 }
