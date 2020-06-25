@@ -6,7 +6,7 @@
   "states": {
     "Initial": {
       "type": "Initial",
-      "direct_transition": "Hartbespreking"
+      "direct_transition": "Wachtlijst Hartbespreking"
     },
     "Terminal": {
       "type": "Terminal"
@@ -79,7 +79,7 @@
           "display": "transaortale percutane aortaklepimplantatie"
         }
       ],
-      "direct_transition": "Wachttijd opname"
+      "direct_transition": "Geen verdenking meer"
     },
     "TTE": {
       "type": "ImagingStudy",
@@ -282,6 +282,94 @@
       "range": {
         "low": 7,
         "high": 2,
+        "unit": "days"
+      }
+    },
+    "Hartaandoening zeker": {
+      "type": "ConditionOnset",
+      "assign_to_attribute": "",
+      "target_encounter": "Hartbespreking",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": 275544003,
+          "display": "hartaandoening"
+        }
+      ],
+      "direct_transition": "Wachttijd aanvullende CT"
+    },
+    "Geen verdenking meer": {
+      "type": "ConditionEnd",
+      "direct_transition": "Hartaandoening zeker",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": 394886001,
+          "display": "verdenking op hartaandoening"
+        }
+      ]
+    },
+    "CT TAVI": {
+      "type": "ImagingStudy",
+      "procedure_code": {
+        "system": "SNOMED-CT",
+        "code": 726631002,
+        "display": "computertomoangiografie ter voorbereiding van percutane aortaklepimplantatie (verrichting)"
+      },
+      "series": [
+        {
+          "body_site": {
+            "system": "SNOMED-CT",
+            "code": "1234",
+            "display": "SNOMED Code"
+          },
+          "modality": {
+            "system": "DICOM-DCM",
+            "code": "CT",
+            "display": "CT TAVI"
+          },
+          "instances": [
+            {
+              "title": "Title of this image",
+              "sop_class": {
+                "system": "DICOM-SOP",
+                "code": "1.2.3.4.5.6.7.8",
+                "display": "DICOM Subject-Object Pair Code"
+              }
+            }
+          ]
+        }
+      ],
+      "direct_transition": "Wachttijd opname"
+    },
+    "Wachtlijst Hartbespreking": {
+      "type": "Delay",
+      "direct_transition": "Hartbespreking",
+      "range": {
+        "low": 4,
+        "high": 7,
+        "unit": "days"
+      }
+    },
+    "Aanvullende CT 2de lijn": {
+      "type": "Encounter",
+      "encounter_class": "ambulatory",
+      "reason": "",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": "1234",
+          "display": "Aanvllende CT 2de lijn"
+        }
+      ],
+      "direct_transition": "CT TAVI"
+    },
+    "Wachttijd aanvullende CT": {
+      "type": "Delay",
+      "direct_transition": "Aanvullende CT 2de lijn",
+      "range": {
+        "low": 2,
+        "high": 5,
         "unit": "days"
       }
     }
