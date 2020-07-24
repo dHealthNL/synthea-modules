@@ -6,29 +6,11 @@
     },
     "Female prevalentie": {
       "type": "Simple",
-      "distributed_transition": [
-        {
-          "transition": "Wachttijd_HA",
-          "distribution": 0.22
-        },
-        {
-          "transition": "Terminal",
-          "distribution": 0.78
-        }
-      ]
+      "direct_transition": "Wachttijd_HA"
     },
     "Male prevalentie": {
       "type": "Simple",
-      "distributed_transition": [
-        {
-          "transition": "Wachttijd_HA",
-          "distribution": 0.27
-        },
-        {
-          "transition": "Terminal",
-          "distribution": 0.73
-        }
-      ]
+      "direct_transition": "Wachttijd_HA"
     },
     "Contact HA": {
       "type": "Encounter",
@@ -55,14 +37,10 @@
       ],
       "direct_transition": "Diagnose"
     },
-    "Beslis": {
-      "type": "EncounterEnd",
-      "direct_transition": "Wachttijd 2de lijn"
-    },
     "Diagnose": {
       "type": "ConditionOnset",
       "assign_to_attribute": "",
-      "target_encounter": "",
+      "target_encounter": "Contact 2e lijn",
       "codes": [
         {
           "system": "SNOMED-CT",
@@ -70,31 +48,63 @@
           "display": "verdenking op hartaandoening"
         }
       ],
-      "direct_transition": "Onderzoeken"
+      "direct_transition": "Einde Contact 2de lijn"
     },
     "Wachttijd_HA": {
       "type": "Delay",
       "direct_transition": "Contact HA",
       "range": {
-        "low": 1,
-        "high": 14,
-        "unit": "days"
+        "low": 10,
+        "high": 50,
+        "unit": "years"
       }
     },
     "Eerste symptomen": {
       "type": "ConditionOnset",
-      "direct_transition": "New_State",
+      "direct_transition": "Einde Contact HA",
       "assign_to_attribute": "",
       "codes": [
         {
           "system": "SNOMED-CT",
           "code": 194828000,
           "display": "angina pectoris"
+        },
+        {
+          "system": "SNOMED-CT",
+          "code": "1234",
+          "display": "vermoeidheid"
         }
       ],
       "target_encounter": "Contact HA"
     },
-    "Initial": {
+    "Onderzoeken": {
+      "type": "CallSubmodule",
+      "submodule": "sub/diagnostiek_2de_lijn",
+      "direct_transition": "TAVI MDO"
+    },
+    "TAVI MDO": {
+      "type": "CallSubmodule",
+      "submodule": "sub/hartnet_tavi2",
+      "direct_transition": "Terminal"
+    },
+    "Wachttijd 2de lijn": {
+      "type": "Delay",
+      "direct_transition": "Contact 2e lijn",
+      "range": {
+        "low": 7,
+        "high": 14,
+        "unit": "days"
+      }
+    },
+    "Einde Contact HA": {
+      "type": "EncounterEnd",
+      "direct_transition": "Wachttijd 2de lijn"
+    },
+    "Einde Contact 2de lijn": {
+      "type": "EncounterEnd",
+      "direct_transition": "Onderzoeken"
+    },
+    "Guard": {
       "type": "Guard",
       "allow": {
         "condition_type": "Age",
@@ -119,37 +129,9 @@
         }
       ]
     },
-    "New_State": {
-      "type": "ConditionOnset",
-      "assign_to_attribute": "",
-      "target_encounter": "Contact HA",
-      "codes": [
-        {
-          "system": "SNOMED-CT",
-          "code": "1234",
-          "display": "vermoeidheid"
-        }
-      ],
-      "direct_transition": "Beslis"
-    },
-    "Onderzoeken": {
-      "type": "CallSubmodule",
-      "submodule": "sub/diagnostiek_2de_lijn",
-      "direct_transition": "TAVI MDO"
-    },
-    "TAVI MDO": {
-      "type": "CallSubmodule",
-      "submodule": "sub/hartnet_tavi2",
-      "direct_transition": "Terminal"
-    },
-    "Wachttijd 2de lijn": {
-      "type": "Delay",
-      "direct_transition": "Contact 2e lijn",
-      "range": {
-        "low": 7,
-        "high": 14,
-        "unit": "days"
-      }
+    "Initial": {
+      "type": "Initial",
+      "direct_transition": "Guard"
     }
   }
 }

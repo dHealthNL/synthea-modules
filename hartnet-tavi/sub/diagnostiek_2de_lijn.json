@@ -460,7 +460,7 @@
           "distribution": 0.9
         },
         {
-          "transition": "Terminal",
+          "transition": "Einde Diagnostiek Consult",
           "distribution": 0.1
         }
       ]
@@ -468,7 +468,7 @@
     "AanmeldenTAVIMDO": {
       "type": "SetAttribute",
       "attribute": "aanmelden-tavi-mdo",
-      "direct_transition": "Terminal",
+      "direct_transition": "Einde Diagnostiek Consult",
       "value": true
     },
     "Diagnostiek Consult": {
@@ -483,6 +483,10 @@
         }
       ],
       "direct_transition": "Beeld1"
+    },
+    "Einde Diagnostiek Consult": {
+      "type": "EncounterEnd",
+      "direct_transition": "Terminal"
     }
   }
 }

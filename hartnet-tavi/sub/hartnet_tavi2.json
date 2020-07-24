@@ -193,7 +193,7 @@
         "high": 4,
         "unit": "hours"
       },
-      "direct_transition": "New_State"
+      "direct_transition": "Einde Opname"
     },
     "Post Poli 2de lijn": {
       "type": "Encounter",
@@ -206,16 +206,7 @@
           "display": "Post Poli 2de lijn"
         }
       ],
-      "distributed_transition": [
-        {
-          "transition": "Terminal",
-          "distribution": 0.8939999999999999
-        },
-        {
-          "transition": "Death",
-          "distribution": 0.106
-        }
-      ]
+      "direct_transition": "Terminal"
     },
     "Post Poli 3de lijn": {
       "type": "Encounter",
@@ -228,24 +219,7 @@
           "display": "Post Poli 3de lijn"
         }
       ],
-      "distributed_transition": [
-        {
-          "transition": "12 mnd",
-          "distribution": 0.9279999999999999
-        },
-        {
-          "transition": "Death",
-          "distribution": 0.072
-        }
-      ]
-    },
-    "Death": {
-      "type": "Death",
-      "exact": {
-        "quantity": 1,
-        "unit": "days"
-      },
-      "direct_transition": "Terminal"
+      "direct_transition": "12 mnd"
     },
     "1 mnd": {
       "type": "Delay",
@@ -263,25 +237,12 @@
       },
       "direct_transition": "Post Poli 2de lijn"
     },
-    "New_State": {
-      "type": "EncounterEnd",
-      "distributed_transition": [
-        {
-          "transition": "1 mnd",
-          "distribution": 0.9730000000000001
-        },
-        {
-          "transition": "Death",
-          "distribution": 0.027
-        }
-      ]
-    },
     "Wachttijd opname": {
       "type": "Delay",
       "direct_transition": "Opname",
       "range": {
         "low": 7,
-        "high": 2,
+        "high": 12,
         "unit": "days"
       }
     },
@@ -340,7 +301,7 @@
           ]
         }
       ],
-      "direct_transition": "Wachttijd opname"
+      "direct_transition": "Einde Aanvullend 2de lijn"
     },
     "Wachtlijst Hartbespreking": {
       "type": "Delay",
@@ -359,7 +320,7 @@
         {
           "system": "SNOMED-CT",
           "code": "1234",
-          "display": "Aanvllende CT 2de lijn"
+          "display": "Aanvullende CT 2de lijn"
         }
       ],
       "direct_transition": "CT TAVI"
@@ -372,6 +333,14 @@
         "high": 5,
         "unit": "days"
       }
+    },
+    "Einde Aanvullend 2de lijn": {
+      "type": "EncounterEnd",
+      "direct_transition": "Wachttijd opname"
+    },
+    "Einde Opname": {
+      "type": "EncounterEnd",
+      "direct_transition": "1 mnd"
     }
   }
 }

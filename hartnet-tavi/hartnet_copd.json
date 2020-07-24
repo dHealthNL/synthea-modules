@@ -9,7 +9,7 @@
       "allow": {
         "condition_type": "Age",
         "operator": ">",
-        "quantity": 18,
+        "quantity": 45,
         "unit": "years"
       },
       "direct_transition": "Delay GP Visit"
