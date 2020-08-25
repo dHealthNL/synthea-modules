@@ -1,0 +1,1213 @@
+{
+  "name": "Hartnet CHF",
+  "remarks": [
+    "REFERENCES",
+    "This module was built based on the following references:",
+    "1. the existing synthea congestive_heartfailure_module",
+    "2. https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5494150/",
+    "3. https://www.acc.org/tools-and-practice-support/clinical-toolkits/~/media/1E4D8F9B69D14F55821BFE642FBFA221.ashx",
+    "4. https://r.details.loinc.org/LOINC/55405-5.html?sections=Comprehensive",
+    "5. https://www.nbt.nhs.uk/sites/default/files/BNP%20fact%20sheet.pdf",
+    "6. https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4254520/",
+    "7. http://heartfailure.onlinejacc.org/content/jhf/2/3/278.full.pdf",
+    "8. https://www.ahajournals.org/doi/full/10.1161/JAHA.117.007569",
+    "",
+    "GOALS",
+    "- Simulate entire lifecycle of HF from onset to death",
+    "- Simulate disease progression through NYHA II-IV",
+    "- Include telemedicine (remote monitoring)",
+    "",
+    "LIMITATIONS",
+    "- Age-specific prevalences are based on numbers from Portugal",
+    "",
+    "IN PROGRESS",
+    "- EF observations",
+    "- Reporting on imaging procedures",
+    "- Implement full LOINC heart failure tracking panel",
+    "",
+    "",
+    "TODO:",
+    "- NYHA classification",
+    "- Adopt medications to severity",
+    "- send patients to observation unit ([6])",
+    "- Better modelling of mortality (e.g. clustered ED visits [8])",
+    "- What is a documented probability of acute exacerbations per 6 months? 1% was too low. But what is good number?"
+  ],
+  "states": {
+    "Initial": {
+      "type": "Initial",
+      "direct_transition": "Age Guard"
+    },
+    "Record_MetabolicPanel": {
+      "type": "DiagnosticReport",
+      "codes": [
+        {
+          "system": "LOINC",
+          "code": "51990-0",
+          "display": "Basic Metabolic Panel"
+        }
+      ],
+      "observations": [
+        {
+          "category": "laboratory",
+          "vital_sign": "Glucose",
+          "codes": [
+            {
+              "system": "LOINC",
+              "code": "2339-0",
+              "display": "Glucose"
+            }
+          ],
+          "unit": "mg/dL"
+        },
+        {
+          "category": "laboratory",
+          "vital_sign": "Urea Nitrogen",
+          "codes": [
+            {
+              "system": "LOINC",
+              "code": "6299-2",
+              "display": "Urea Nitrogen"
+            }
+          ],
+          "unit": "mg/dL"
+        },
+        {
+          "category": "laboratory",
+          "vital_sign": "Creatinine",
+          "codes": [
+            {
+              "system": "LOINC",
+              "code": "38483-4",
+              "display": "Creatinine"
+            }
+          ],
+          "unit": "mg/dL"
+        },
+        {
+          "category": "laboratory",
+          "vital_sign": "Calcium",
+          "codes": [
+            {
+              "system": "LOINC",
+              "code": "49765-1",
+              "display": "Calcium"
+            }
+          ],
+          "unit": "mg/dL"
+        },
+        {
+          "category": "laboratory",
+          "vital_sign": "Sodium",
+          "codes": [
+            {
+              "system": "LOINC",
+              "code": "2947-0",
+              "display": "Sodium"
+            }
+          ],
+          "unit": "mmol/L"
+        },
+        {
+          "category": "laboratory",
+          "vital_sign": "Potassium",
+          "codes": [
+            {
+              "system": "LOINC",
+              "code": "6298-4",
+              "display": "Potassium"
+            }
+          ],
+          "unit": "mmol/L"
+        },
+        {
+          "category": "laboratory",
+          "vital_sign": "Chloride",
+          "codes": [
+            {
+              "system": "LOINC",
+              "code": "2069-3",
+              "display": "Chloride"
+            }
+          ],
+          "unit": "mmol/L"
+        },
+        {
+          "category": "laboratory",
+          "vital_sign": "Carbon Dioxide",
+          "codes": [
+            {
+              "system": "LOINC",
+              "code": "20565-8",
+              "display": "Carbon Dioxide"
+            }
+          ],
+          "unit": "mmol/L"
+        }
+      ],
+      "direct_transition": "NTproBNP lab workup"
+    },
+    "chance of CHF": {
+      "type": "Delay",
+      "exact": {
+        "quantity": 1,
+        "unit": "years"
+      },
+      "conditional_transition": [
+        {
+          "transition": "Age_80-Chance of CHF",
+          "condition": {
+            "condition_type": "Age",
+            "operator": ">",
+            "quantity": 80,
+            "unit": "years"
+          }
+        },
+        {
+          "transition": "Age_70-79-Chance of CHF",
+          "condition": {
+            "condition_type": "Age",
+            "operator": ">",
+            "quantity": 70,
+            "unit": "years"
+          }
+        },
+        {
+          "transition": "Age_60-69-Chance of CHF",
+          "condition": {
+            "condition_type": "Age",
+            "operator": ">",
+            "quantity": 60,
+            "unit": "years"
+          }
+        },
+        {
+          "transition": "Age_50-59-Chance of CHF"
+        }
+      ]
+    },
+    "Age Guard": {
+      "type": "Guard",
+      "allow": {
+        "condition_type": "Age",
+        "operator": ">",
+        "quantity": 50,
+        "unit": "years"
+      },
+      "direct_transition": "chance of CHF"
+    },
+    "Age_50-59-Chance of CHF": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "CHF onset",
+          "distribution": 0.003
+        },
+        {
+          "transition": "chance of CHF",
+          "distribution": 0.9970000000000001
+        }
+      ]
+    },
+    "Age_60-69-Chance of CHF": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "CHF onset",
+          "distribution": 0.008
+        },
+        {
+          "transition": "chance of CHF",
+          "distribution": 0.992
+        }
+      ]
+    },
+    "Age_70-79-Chance of CHF": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "CHF onset",
+          "distribution": 0.013
+        },
+        {
+          "transition": "chance of CHF",
+          "distribution": 0.9870000000000001
+        }
+      ]
+    },
+    "Age_80-Chance of CHF": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "CHF onset",
+          "distribution": 0.02
+        },
+        {
+          "transition": "chance of CHF",
+          "distribution": 0.98
+        }
+      ]
+    },
+    "CHF onset": {
+      "type": "Simple",
+      "direct_transition": "Symptomen Hartfalen(PLACEHOLDER)"
+    },
+    "NTproBNP lab workup": {
+      "type": "Observation",
+      "category": "laboratory",
+      "unit": "pg/mL",
+      "codes": [
+        {
+          "system": "LOINC",
+          "code": "33762-6",
+          "display": "NT-proBNP"
+        }
+      ],
+      "direct_transition": "X-thorax",
+      "range": {
+        "low": 200,
+        "high": 2000
+      }
+    },
+    "Terminal": {
+      "type": "Terminal"
+    },
+    "Vitale gegevens": {
+      "type": "MultiObservation",
+      "category": "vital-signs",
+      "number_of_observations": 0,
+      "codes": [
+        {
+          "system": "LOINC",
+          "code": "85354-9",
+          "display": "BP pnl w all optional"
+        }
+      ],
+      "observations": [
+        {
+          "category": "laboratory",
+          "unit": "mm[Hg]",
+          "codes": [
+            {
+              "system": "LOINC",
+              "code": "8480-6",
+              "display": "Systolic Blood Pressure"
+            }
+          ],
+          "vital_sign": "Systolic Blood Pressure"
+        },
+        {
+          "category": "laboratory",
+          "unit": "mm[Hg]",
+          "codes": [
+            {
+              "system": "LOINC",
+              "code": "8462-4",
+              "display": "Diastolic Blood Pressure"
+            }
+          ],
+          "vital_sign": "Diastolic Blood Pressure"
+        }
+      ],
+      "conditional_transition": [
+        {
+          "transition": "Wel acuut (PLACEHOLDER)",
+          "condition": {
+            "condition_type": "Active Condition",
+            "codes": [
+              {
+                "system": "SNOMED-CT",
+                "code": 56675007,
+                "display": "Acute heart failure (disorder)"
+              }
+            ]
+          }
+        },
+        {
+          "transition": "Niet acuut (PLACEHOLDER)"
+        }
+      ]
+    },
+    "X-thorax": {
+      "type": "ImagingStudy",
+      "procedure_code": {
+        "system": "SNOMED-CT",
+        "code": 399208008,
+        "display": "Plain chest X-ray (procedure)"
+      },
+      "series": [
+        {
+          "body_site": {
+            "system": "SNOMED-CT",
+            "code": 51185008,
+            "display": "Thoracic structure (body structure)"
+          },
+          "modality": {
+            "system": "DICOM-DCM",
+            "code": "CR",
+            "display": "Computed Radiography"
+          },
+          "instances": [
+            {
+              "title": "Title of this image",
+              "sop_class": {
+                "system": "DICOM-SOP",
+                "code": "1.2.840.10008.5.1.4.1.1.1.1",
+                "display": "Digital X-Ray Image Storage – for Presentation"
+              }
+            }
+          ]
+        }
+      ],
+      "direct_transition": "Vitale gegevens"
+    },
+    "Symptomen Hartfalen(PLACEHOLDER)": {
+      "type": "Simple",
+      "remarks": [
+        "Dyspneu",
+        "Familieamnese",
+        "",
+        "Bepaling of hartfalen 'acuut' is of 'geleidelijk'"
+      ],
+      "direct_transition": "Dyspneu"
+    },
+    "Geen hartfalen": {
+      "type": "Simple",
+      "direct_transition": "Terminal"
+    },
+    "ECG (PLACEHOLDER)": {
+      "type": "Simple",
+      "direct_transition": "Record_MetabolicPanel"
+    },
+    "Wel acuut (PLACEHOLDER)": {
+      "type": "Simple",
+      "conditional_transition": [
+        {
+          "transition": "Encounter Huisarts 1",
+          "condition": {
+            "condition_type": "Or",
+            "conditions": [
+              {
+                "condition_type": "Active Condition",
+                "codes": [
+                  {
+                    "system": "SNOMED-CT",
+                    "code": 102594003,
+                    "display": "Electrocardiogram abnormal (finding)"
+                  }
+                ]
+              },
+              {
+                "condition_type": "Observation",
+                "codes": [
+                  {
+                    "system": "LOINC",
+                    "code": "33762-6",
+                    "display": "NT-ProBNP"
+                  }
+                ],
+                "operator": ">=",
+                "value": 400
+              },
+              {
+                "condition_type": "Observation",
+                "codes": [
+                  {
+                    "system": "LOINC",
+                    "code": "30934-4",
+                    "display": "BNP"
+                  }
+                ],
+                "operator": ">=",
+                "value": 100
+              }
+            ]
+          }
+        },
+        {
+          "transition": "Geen hartfalen",
+          "condition": {
+            "condition_type": "And",
+            "conditions": [
+              {
+                "condition_type": "Not",
+                "condition": {
+                  "condition_type": "Active Condition",
+                  "codes": [
+                    {
+                      "system": "SNOMED-CT",
+                      "code": 102594003,
+                      "display": "Electrocardiogram abnormal (finding)"
+                    }
+                  ]
+                }
+              },
+              {
+                "condition_type": "Or",
+                "conditions": [
+                  {
+                    "condition_type": "Observation",
+                    "codes": [
+                      {
+                        "system": "LOINC",
+                        "code": "33762-6",
+                        "display": "NT-ProBNP"
+                      }
+                    ],
+                    "operator": "<",
+                    "value": 400
+                  },
+                  {
+                    "condition_type": "Observation",
+                    "codes": [
+                      {
+                        "system": "LOINC",
+                        "code": "30934-4)",
+                        "display": "BNP"
+                      }
+                    ],
+                    "operator": "<",
+                    "value": 100
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "Niet acuut (PLACEHOLDER)": {
+      "type": "Simple",
+      "conditional_transition": [
+        {
+          "transition": "Encounter Huisarts 1",
+          "condition": {
+            "condition_type": "Or",
+            "conditions": [
+              {
+                "condition_type": "Active Condition",
+                "codes": [
+                  {
+                    "system": "SNOMED-CT",
+                    "code": 102594003,
+                    "display": "Electrocardiogram abnormal (finding)"
+                  }
+                ]
+              },
+              {
+                "condition_type": "Observation",
+                "codes": [
+                  {
+                    "system": "LOINC",
+                    "code": "33762-6",
+                    "display": "NT-ProBNP"
+                  }
+                ],
+                "operator": ">=",
+                "value": 125
+              },
+              {
+                "condition_type": "Observation",
+                "codes": [
+                  {
+                    "system": "LOINC",
+                    "code": "30934-4",
+                    "display": "BNP"
+                  }
+                ],
+                "operator": ">=",
+                "value": 35
+              }
+            ]
+          }
+        },
+        {
+          "transition": "Geen hartfalen",
+          "condition": {
+            "condition_type": "And",
+            "conditions": [
+              {
+                "condition_type": "Not",
+                "condition": {
+                  "condition_type": "Active Condition",
+                  "codes": [
+                    {
+                      "system": "SNOMED-CT",
+                      "code": 102594003,
+                      "display": "Electrocardiogram abnormal (finding)"
+                    }
+                  ]
+                }
+              },
+              {
+                "condition_type": "Or",
+                "conditions": [
+                  {
+                    "condition_type": "Observation",
+                    "codes": [
+                      {
+                        "system": "LOINC",
+                        "code": "33762-6",
+                        "display": "NT-ProBNP"
+                      }
+                    ],
+                    "operator": "<",
+                    "value": 125
+                  },
+                  {
+                    "condition_type": "Observation",
+                    "codes": [
+                      {
+                        "system": "LOINC",
+                        "code": "30934-4)",
+                        "display": "BNP"
+                      }
+                    ],
+                    "operator": "<",
+                    "value": 35
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "Klachtmanagement": {
+      "type": "Simple",
+      "direct_transition": "Check ACE-remmer Medicatie"
+    },
+    "Prescribe Meds 2": {
+      "type": "MedicationOrder",
+      "codes": [
+        {
+          "system": "RxNorm",
+          "code": "Unknown",
+          "display": "Nitroglycerine (oromucosal)"
+        }
+      ],
+      "direct_transition": "Afhandeling Medicatie"
+    },
+    "Afhandeling Medicatie": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Opname Encounter",
+          "distribution": 0.99
+        },
+        {
+          "transition": "Overleden",
+          "distribution": 0.01
+        }
+      ]
+    },
+    "Overleden": {
+      "type": "Death",
+      "direct_transition": "Terminal"
+    },
+    "Check ACE-remmer Medicatie": {
+      "type": "Simple",
+      "conditional_transition": [
+        {
+          "transition": "Check Diuretica Medicatie",
+          "condition": {
+            "condition_type": "Active Medication",
+            "codes": [
+              {
+                "system": "RxNorm",
+                "code": 1998,
+                "display": "Captopril"
+              },
+              {
+                "system": "RxNorm",
+                "code": 3827,
+                "display": "Enalapril"
+              },
+              {
+                "system": "RxNorm",
+                "code": 29046,
+                "display": "Lisinopril"
+              },
+              {
+                "system": "RxNorm",
+                "code": 35296,
+                "display": "Ramipril"
+              },
+              {
+                "system": "RxNorm",
+                "code": 38454,
+                "display": "Trandolapril"
+              }
+            ]
+          }
+        },
+        {
+          "transition": "Prescribe Meds 3"
+        }
+      ]
+    },
+    "Check Diuretica Medicatie": {
+      "type": "Simple",
+      "conditional_transition": [
+        {
+          "transition": "Check Betablockers",
+          "condition": {
+            "condition_type": "Active Medication",
+            "codes": [
+              {
+                "system": "RxNorm",
+                "code": 4603,
+                "display": "Furosemide"
+              },
+              {
+                "system": "RxNorm",
+                "code": 1808,
+                "display": "Bumetanide"
+              },
+              {
+                "system": "RxNorm",
+                "code": 5487,
+                "display": "Hydrochloorthiazide"
+              },
+              {
+                "system": "RxNorm",
+                "code": 2409,
+                "display": "Chloortalidon"
+              }
+            ]
+          }
+        },
+        {
+          "transition": "Prescribe Meds 4"
+        }
+      ]
+    },
+    "Prescribe Meds 3": {
+      "type": "MedicationOrder",
+      "codes": [
+        {
+          "system": "RxNorm",
+          "code": 1998,
+          "display": "Captopril"
+        },
+        {
+          "system": "RxNorm",
+          "code": 3827,
+          "display": "Enalapril"
+        },
+        {
+          "system": "RxNorm",
+          "code": 29046,
+          "display": "Lisinopril"
+        },
+        {
+          "system": "RxNorm",
+          "code": 35296,
+          "display": "Ramipril"
+        },
+        {
+          "system": "RxNorm",
+          "code": 38454,
+          "display": "Trandolapril"
+        }
+      ],
+      "direct_transition": "Check Diuretica Medicatie"
+    },
+    "Prescribe Meds 1": {
+      "type": "MedicationOrder",
+      "codes": [
+        {
+          "system": "RxNorm",
+          "code": 315971,
+          "display": "Furosemide 40mg"
+        },
+        {
+          "system": "RxNorm",
+          "code": 205489,
+          "display": "Bumetanide 1mg"
+        }
+      ],
+      "conditional_transition": [
+        {
+          "transition": "Prescribe Meds 2",
+          "condition": {
+            "condition_type": "Observation",
+            "codes": [
+              {
+                "system": "LOINC",
+                "code": "8480-6",
+                "display": "Systolic Blood Pressure"
+              }
+            ],
+            "operator": "<",
+            "value": 90
+          }
+        },
+        {
+          "transition": "Afhandeling Medicatie"
+        }
+      ]
+    },
+    "Check Betablockers": {
+      "type": "Simple",
+      "conditional_transition": [
+        {
+          "transition": "Encounter Huisarts 2",
+          "condition": {
+            "condition_type": "Active Medication",
+            "codes": [
+              {
+                "system": "RxNorm",
+                "code": 19484,
+                "display": "Bisoprolol"
+              },
+              {
+                "system": "RxNorm",
+                "code": 20352,
+                "display": "Carvedilol"
+              },
+              {
+                "system": "RxNorm",
+                "code": 6918,
+                "display": "metoprololsuccinaat met vertraagde afgifte"
+              },
+              {
+                "system": "RxNorm",
+                "code": 31555,
+                "display": "Nebivolol"
+              }
+            ]
+          }
+        },
+        {
+          "transition": "Prescribe Meds 5"
+        }
+      ]
+    },
+    "Prescribe Meds 4": {
+      "type": "MedicationOrder",
+      "codes": [
+        {
+          "system": "RxNorm",
+          "code": 4603,
+          "display": "Furosemide"
+        },
+        {
+          "system": "RxNorm",
+          "code": 1808,
+          "display": "Bumetanide"
+        },
+        {
+          "system": "RxNorm",
+          "code": 5487,
+          "display": "Hydrochloorthiazide"
+        },
+        {
+          "system": "RxNorm",
+          "code": 2409,
+          "display": "Chloortalidon"
+        }
+      ],
+      "direct_transition": "Check Betablockers"
+    },
+    "Prescribe Meds 5": {
+      "type": "MedicationOrder",
+      "codes": [
+        {
+          "system": "RxNorm",
+          "code": 19484,
+          "display": "Bisoprolol"
+        },
+        {
+          "system": "RxNorm",
+          "code": 20352,
+          "display": "Carvedilol"
+        },
+        {
+          "system": "RxNorm",
+          "code": 6918,
+          "display": "metoprololsuccinaat met vertraagde afgifte"
+        },
+        {
+          "system": "RxNorm",
+          "code": 31555,
+          "display": "Nebivolol"
+        }
+      ],
+      "direct_transition": "Encounter Huisarts 2"
+    },
+    "Encounter Huisarts 1": {
+      "type": "Encounter",
+      "encounter_class": "ambulatory",
+      "reason": "",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": 84114007,
+          "display": "Hartfalen"
+        }
+      ],
+      "conditional_transition": [
+        {
+          "transition": "Prescribe Meds 1",
+          "condition": {
+            "condition_type": "Active Condition",
+            "codes": [
+              {
+                "system": "SNOMED-CT",
+                "code": 56675007,
+                "display": "Acute heart failure (disorder)"
+              }
+            ]
+          }
+        },
+        {
+          "transition": "Klachtmanagement"
+        }
+      ]
+    },
+    "Encounter Huisarts 2": {
+      "type": "Encounter",
+      "encounter_class": "ambulatory",
+      "reason": "",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": 96311000119109,
+          "display": "Exacerbation of congestive heart failure (disorder)"
+        }
+      ],
+      "direct_transition": "Opname Encounter"
+    },
+    "Opname Encounter": {
+      "type": "Simple",
+      "direct_transition": "Klinisch Lab"
+    },
+    "Klinisch Lab": {
+      "type": "DiagnosticReport",
+      "codes": [
+        {
+          "system": "LOINC",
+          "code": "24323-8",
+          "display": "Comprehensive metabolic 2000 panel - Serum or Plasma"
+        }
+      ],
+      "observations": [
+        {
+          "category": "laboratory",
+          "vital_sign": "Glucose",
+          "codes": [
+            {
+              "system": "LOINC",
+              "code": "2339-0",
+              "display": "Glucose"
+            }
+          ],
+          "unit": "mg/dL"
+        },
+        {
+          "category": "laboratory",
+          "vital_sign": "Urea Nitrogen",
+          "codes": [
+            {
+              "system": "LOINC",
+              "code": "6299-2",
+              "display": "Urea Nitrogen"
+            }
+          ],
+          "unit": "mg/dL"
+        },
+        {
+          "category": "laboratory",
+          "codes": [
+            {
+              "system": "LOINC",
+              "code": "38483-4",
+              "display": "Creatinine"
+            }
+          ],
+          "unit": "mg/dL",
+          "vital_sign": "Creatinine"
+        },
+        {
+          "category": "laboratory",
+          "vital_sign": "Calcium",
+          "codes": [
+            {
+              "system": "LOINC",
+              "code": "49765-1",
+              "display": "Calcium"
+            }
+          ],
+          "unit": "mg/dL"
+        },
+        {
+          "category": "laboratory",
+          "vital_sign": "Sodium",
+          "codes": [
+            {
+              "system": "LOINC",
+              "code": "2947-0",
+              "display": "Sodium"
+            }
+          ],
+          "unit": "mmol/L"
+        },
+        {
+          "category": "laboratory",
+          "vital_sign": "Potassium",
+          "codes": [
+            {
+              "system": "LOINC",
+              "code": "6298-4",
+              "display": "Potassium"
+            }
+          ],
+          "unit": "mmol/L"
+        },
+        {
+          "category": "laboratory",
+          "vital_sign": "Chloride",
+          "codes": [
+            {
+              "system": "LOINC",
+              "code": "2069-3",
+              "display": "Chloride"
+            }
+          ],
+          "unit": "mmol/L"
+        },
+        {
+          "category": "laboratory",
+          "vital_sign": "Carbon Dioxide",
+          "codes": [
+            {
+              "system": "LOINC",
+              "code": "20565-8",
+              "display": "Carbon Dioxide"
+            }
+          ],
+          "unit": "mmol/L"
+        },
+        {
+          "category": "laboratory",
+          "unit": "mL/min",
+          "codes": [
+            {
+              "system": "LOINC",
+              "code": "33914-3",
+              "display": "Glomerular filtration rate/1.73 sq M.predicted"
+            }
+          ],
+          "range": {
+            "low": 4,
+            "high": 29
+          }
+        },
+        {
+          "category": "laboratory",
+          "unit": "g/dL",
+          "codes": [
+            {
+              "system": "LOINC",
+              "code": "2885-2",
+              "display": "Protein [Mass/volume] in Serum or Plasma"
+            }
+          ],
+          "range": {
+            "low": 60,
+            "high": 80
+          }
+        },
+        {
+          "category": "laboratory",
+          "unit": "g/dL",
+          "codes": [
+            {
+              "system": "LOINC",
+              "code": "1751-7",
+              "display": "Albumin [Mass/volume] in Serum or Plasma"
+            }
+          ],
+          "range": {
+            "low": 3.5,
+            "high": 5.5
+          }
+        },
+        {
+          "category": "laboratory",
+          "unit": "g/L",
+          "codes": [
+            {
+              "system": "LOINC",
+              "code": "10834-0",
+              "display": "Globulin [Mass/volume] in Serum by calculation"
+            }
+          ],
+          "range": {
+            "low": 2,
+            "high": 3.5
+          }
+        },
+        {
+          "category": "laboratory",
+          "unit": "mg/dL",
+          "codes": [
+            {
+              "system": "LOINC",
+              "code": "1975-2",
+              "display": "Bilirubin.total [Mass/volume] in Serum or Plasma"
+            }
+          ],
+          "range": {
+            "low": 0.1,
+            "high": 1.2
+          }
+        },
+        {
+          "category": "laboratory",
+          "unit": "U/L",
+          "codes": [
+            {
+              "system": "LOINC",
+              "code": "6768-6",
+              "display": "Alkaline phosphatase [Enzymatic activity/volume] in Serum or Plasma"
+            }
+          ],
+          "range": {
+            "low": 20,
+            "high": 140
+          }
+        },
+        {
+          "category": "laboratory",
+          "unit": "U/L",
+          "codes": [
+            {
+              "system": "LOINC",
+              "code": "1742-6",
+              "display": "Alanine aminotransferase [Enzymatic activity/volume] in Serum or Plasma"
+            }
+          ],
+          "range": {
+            "low": 20,
+            "high": 60
+          }
+        },
+        {
+          "category": "laboratory",
+          "unit": "U/L",
+          "codes": [
+            {
+              "system": "LOINC",
+              "code": "1920-8",
+              "display": "Aspartate aminotransferase [Enzymatic activity/volume] in Serum or Plasma"
+            }
+          ],
+          "range": {
+            "low": 6,
+            "high": 40
+          }
+        }
+      ],
+      "direct_transition": "Ablatie of Pacemaker/ICD plaatsing"
+    },
+    "Delay 1 Year": {
+      "type": "Delay",
+      "exact": {
+        "quantity": 1,
+        "unit": "years"
+      },
+      "distributed_transition": [
+        {
+          "transition": "Delay 4 years",
+          "distribution": 0.8
+        },
+        {
+          "transition": "Overleden",
+          "distribution": 0.2
+        }
+      ]
+    },
+    "Procedure: Ablatie of Pacemaker / ICD plaatsing": {
+      "type": "Procedure",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": 233159005,
+          "display": "ablatie voor aritmie (verrichting)"
+        },
+        {
+          "system": "SNOMED-CT",
+          "code": 233174007,
+          "display": "verrichting betreffende cardiale pacemaker (verrichting)"
+        }
+      ],
+      "duration": {
+        "low": 1,
+        "high": 12,
+        "unit": "days"
+      },
+      "distributed_transition": [
+        {
+          "transition": "Delay 1 Year",
+          "distribution": 0.96
+        },
+        {
+          "transition": "Overleden",
+          "distribution": 0.04
+        }
+      ]
+    },
+    "Delay 4 years": {
+      "type": "Delay",
+      "exact": {
+        "quantity": 4,
+        "unit": "years"
+      },
+      "distributed_transition": [
+        {
+          "transition": "Terminal",
+          "distribution": 0.5
+        },
+        {
+          "transition": "Overleden",
+          "distribution": 0.5
+        }
+      ]
+    },
+    "Dyspneu": {
+      "type": "ConditionOnset",
+      "assign_to_attribute": "",
+      "target_encounter": "",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": 267036007,
+          "display": "dyspneu (bevinding)"
+        }
+      ],
+      "direct_transition": "Oedeem"
+    },
+    "Oedeem": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": 118654009,
+          "display": "aandoening gekenmerkt door oedeem (aandoening)"
+        }
+      ],
+      "direct_transition": "Familieamnesie (PLACEHOLDER)"
+    },
+    "Familieamnesie (PLACEHOLDER)": {
+      "type": "Simple",
+      "direct_transition": "ECG (PLACEHOLDER)"
+    },
+    "Ablatie of Pacemaker/ICD plaatsing": {
+      "type": "Encounter",
+      "direct_transition": "Procedure: Ablatie of Pacemaker / ICD plaatsing",
+      "wellness": true
+    }
+  }
+}
