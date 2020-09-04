@@ -1,0 +1,357 @@
+{
+  "name": "Diagnostiek lab panel",
+  "remarks": [
+    "Aanlevering diagnostiek 2de lijn."
+  ],
+  "states": {
+    "Initial": {
+      "type": "Initial",
+      "direct_transition": "Lab2"
+    },
+    "Terminal": {
+      "type": "Terminal"
+    },
+    "Lab2": {
+      "type": "Observation",
+      "category": "laboratory",
+      "unit": "mmol/l",
+      "codes": [
+        {
+          "system": "loinc",
+          "code": "2339-0",
+          "display": "Glucose"
+        }
+      ],
+      "direct_transition": "Lab3",
+      "range": {
+        "decimals": 2,
+        "low": 4.5,
+        "high": 6.7
+      }
+    },
+    "Lab3": {
+      "type": "Observation",
+      "category": "laboratory",
+      "unit": "U/l",
+      "codes": [
+        {
+          "system": "loinc",
+          "code": "1783-0",
+          "display": "Alkalische fosfatase"
+        }
+      ],
+      "direct_transition": "Lab4",
+      "range": {
+        "decimals": 2,
+        "low": 120,
+        "high": 125
+      }
+    },
+    "Lab4": {
+      "type": "Observation",
+      "category": "laboratory",
+      "unit": "U/l",
+      "codes": [
+        {
+          "system": "loinc",
+          "code": "76625-3",
+          "display": "ALAT"
+        }
+      ],
+      "direct_transition": "Lab5",
+      "range": {
+        "decimals": 2,
+        "low": 40,
+        "high": 45
+      }
+    },
+    "Lab5": {
+      "type": "Observation",
+      "category": "laboratory",
+      "unit": "U/l",
+      "codes": [
+        {
+          "system": "loinc",
+          "code": "16412-9",
+          "display": "ASAT"
+        }
+      ],
+      "direct_transition": "Lab6",
+      "range": {
+        "decimals": 2,
+        "low": 45,
+        "high": 50
+      }
+    },
+    "Lab6": {
+      "type": "Observation",
+      "category": "laboratory",
+      "unit": "mmol/l",
+      "codes": [
+        {
+          "system": "loinc",
+          "code": "49765-1",
+          "display": "Calcium"
+        }
+      ],
+      "direct_transition": "Lab7",
+      "range": {
+        "decimals": 2,
+        "low": 2.2,
+        "high": 3
+      }
+    },
+    "Lab7": {
+      "type": "Observation",
+      "category": "laboratory",
+      "unit": "mg/L",
+      "codes": [
+        {
+          "system": "loinc",
+          "code": "48421–2",
+          "display": "CRP"
+        }
+      ],
+      "direct_transition": "Lab8",
+      "range": {
+        "decimals": 2,
+        "low": 8,
+        "high": 10
+      }
+    },
+    "Lab8": {
+      "type": "Observation",
+      "category": "laboratory",
+      "unit": "E/L",
+      "codes": [
+        {
+          "system": "loinc",
+          "code": "2324-2",
+          "display": "GGT"
+        }
+      ],
+      "direct_transition": "Lab9",
+      "range": {
+        "decimals": 2,
+        "low": 35,
+        "high": 40
+      }
+    },
+    "Lab9": {
+      "type": "Observation",
+      "category": "laboratory",
+      "unit": "mmol/l",
+      "codes": [
+        {
+          "system": "loinc",
+          "code": "717-9",
+          "display": "Hb"
+        }
+      ],
+      "direct_transition": "Lab10",
+      "range": {
+        "decimals": 2,
+        "low": 8,
+        "high": 15
+      }
+    },
+    "Lab10": {
+      "type": "Observation",
+      "category": "laboratory",
+      "unit": "l/l",
+      "codes": [
+        {
+          "system": "loinc",
+          "code": "20570-8",
+          "display": "Ht"
+        }
+      ],
+      "direct_transition": "Lab11",
+      "range": {
+        "decimals": 2,
+        "low": 0.4,
+        "high": 0.6
+      }
+    },
+    "Lab11": {
+      "type": "Observation",
+      "category": "laboratory",
+      "unit": "mmol/l",
+      "codes": [
+        {
+          "system": "loinc",
+          "code": "6298-4",
+          "display": "Kalium"
+        }
+      ],
+      "direct_transition": "Lab12",
+      "range": {
+        "decimals": 2,
+        "low": 4,
+        "high": 5
+      }
+    },
+    "Lab12": {
+      "type": "Observation",
+      "category": "laboratory",
+      "unit": "μmol/L",
+      "codes": [
+        {
+          "system": "loinc",
+          "code": "59826-8",
+          "display": "Kreatinine"
+        }
+      ],
+      "direct_transition": "Lab13",
+      "range": {
+        "decimals": 2,
+        "low": 60,
+        "high": 120
+      }
+    },
+    "Lab13": {
+      "type": "Observation",
+      "category": "laboratory",
+      "unit": "U/L",
+      "codes": [
+        {
+          "system": "loinc",
+          "code": "60017-1",
+          "display": "LDH"
+        }
+      ],
+      "direct_transition": "Lab14",
+      "range": {
+        "decimals": 2,
+        "low": 160,
+        "high": 250
+      }
+    },
+    "Lab14": {
+      "type": "Observation",
+      "category": "laboratory",
+      "unit": "x10^9/L",
+      "codes": [
+        {
+          "system": "loinc",
+          "code": "26464-8",
+          "display": "Leukocyten"
+        }
+      ],
+      "direct_transition": "Lab15",
+      "range": {
+        "decimals": 2,
+        "low": 8,
+        "high": 14
+      }
+    },
+    "Lab15": {
+      "type": "Observation",
+      "category": "laboratory",
+      "unit": "mmol/l",
+      "codes": [
+        {
+          "system": "loinc",
+          "code": "27210-4",
+          "display": "Magnesium"
+        }
+      ],
+      "direct_transition": "Lab16",
+      "range": {
+        "decimals": 2,
+        "low": 0.5,
+        "high": 0.9
+      }
+    },
+    "Lab16": {
+      "type": "Observation",
+      "category": "laboratory",
+      "unit": "mmol/l",
+      "codes": [
+        {
+          "system": "loinc",
+          "code": "2947-0",
+          "display": "Natrium"
+        }
+      ],
+      "direct_transition": "Lab17",
+      "range": {
+        "decimals": 2,
+        "low": 125,
+        "high": 160
+      }
+    },
+    "Lab17": {
+      "type": "Observation",
+      "category": "laboratory",
+      "unit": "mm/uur",
+      "codes": [
+        {
+          "system": "loinc",
+          "code": "30341-2",
+          "display": "BSE"
+        }
+      ],
+      "direct_transition": "Lab18",
+      "range": {
+        "decimals": 2,
+        "low": 20,
+        "high": 25
+      }
+    },
+    "Lab18": {
+      "type": "Observation",
+      "category": "laboratory",
+      "unit": "×10^3/mm^3",
+      "codes": [
+        {
+          "system": "loinc",
+          "code": "26515-7",
+          "display": "Trombocyten"
+        }
+      ],
+      "direct_transition": "Lab19",
+      "range": {
+        "decimals": 2,
+        "low": 150,
+        "high": 400
+      }
+    },
+    "Lab19": {
+      "type": "Observation",
+      "category": "laboratory",
+      "unit": "mmol/l",
+      "codes": [
+        {
+          "system": "loinc",
+          "code": "20977-5",
+          "display": "Ureum"
+        }
+      ],
+      "direct_transition": "Lab20",
+      "range": {
+        "decimals": 2,
+        "low": 1.6,
+        "high": 7.4
+      }
+    },
+    "Lab20": {
+      "type": "Observation",
+      "category": "laboratory",
+      "unit": "pg/mL",
+      "codes": [
+        {
+          "system": "loinc",
+          "code": "33762-6",
+          "display": "NT Pro-BNP"
+        }
+      ],
+      "direct_transition": "Terminal",
+      "range": {
+        "decimals": 2,
+        "low": 850,
+        "high": 950
+      }
+    }
+  }
+}

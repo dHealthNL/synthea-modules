@@ -9,7 +9,7 @@
       "allow": {
         "condition_type": "Age",
         "operator": ">",
-        "quantity": 45,
+        "quantity": 30,
         "unit": "years"
       },
       "direct_transition": "Delay GP Visit"
@@ -540,7 +540,7 @@
       "type": "Delay",
       "direct_transition": "Regular GP Encounter",
       "range": {
-        "low": 1,
+        "low": 10,
         "high": 40,
         "unit": "years"
       }

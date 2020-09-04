@@ -6,12 +6,12 @@
   "states": {
     "Initial": {
       "type": "Initial",
-      "direct_transition": "Wachtlijst Hartbespreking"
+      "direct_transition": "Wachtlijst MDO Hartteam"
     },
     "Terminal": {
       "type": "Terminal"
     },
-    "Hartbespreking": {
+    "MDO Hartteam": {
       "type": "Encounter",
       "encounter_class": "ambulatory",
       "reason": "",
@@ -19,7 +19,7 @@
         {
           "system": "SNOMED-CT",
           "code": "1234",
-          "display": "Hartbespreking"
+          "display": "MDO Hartteam"
         }
       ],
       "direct_transition": "Behandelmogelijkheden"
@@ -35,7 +35,7 @@
           "display": "Opname"
         }
       ],
-      "direct_transition": "POPA"
+      "direct_transition": "Lab1"
     },
     "POPA": {
       "type": "Procedure",
@@ -51,7 +51,7 @@
         "high": 30,
         "unit": "minutes"
       },
-      "direct_transition": "Lab1"
+      "direct_transition": "X-thorax"
     },
     "Behandelmogelijkheden": {
       "type": "CarePlanStart",
@@ -112,7 +112,7 @@
           ]
         }
       ],
-      "direct_transition": "X-thorax"
+      "direct_transition": "LabHb"
     },
     "X-thorax": {
       "type": "ImagingStudy",
@@ -155,13 +155,14 @@
         {
           "system": "LOINC",
           "code": "34532-2",
-          "display": "Blood type and Indirect antibody"
+          "display": "bloedtype & Indirecte antistof screening panel",
+          "value_set": "A,B,O"
         }
       ],
+      "direct_transition": "Lab2",
       "exact": {
-        "quantity": 1
-      },
-      "direct_transition": "Lab2"
+        "quantity": "A"
+      }
     },
     "Lab2": {
       "type": "Observation",
@@ -171,13 +172,13 @@
         {
           "system": "LOINC",
           "code": "34714-6",
-          "display": "INR in Blood by Coagulation assay"
+          "display": "PT-INR"
         }
       ],
       "exact": {
         "quantity": 1
       },
-      "direct_transition": "TTE"
+      "direct_transition": "POPA"
     },
     "Aortaklepimplantatie": {
       "type": "Procedure",
@@ -193,7 +194,7 @@
         "high": 4,
         "unit": "hours"
       },
-      "direct_transition": "Einde Opname"
+      "direct_transition": "TTE"
     },
     "Post Poli 2de lijn": {
       "type": "Encounter",
@@ -206,7 +207,7 @@
           "display": "Post Poli 2de lijn"
         }
       ],
-      "direct_transition": "Terminal"
+      "direct_transition": "New_State_3"
     },
     "Post Poli 3de lijn": {
       "type": "Encounter",
@@ -219,7 +220,7 @@
           "display": "Post Poli 3de lijn"
         }
       ],
-      "direct_transition": "12 mnd"
+      "direct_transition": "New_State_2"
     },
     "1 mnd": {
       "type": "Delay",
@@ -232,24 +233,15 @@
     "12 mnd": {
       "type": "Delay",
       "exact": {
-        "quantity": 3,
+        "quantity": 12,
         "unit": "months"
       },
       "direct_transition": "Post Poli 2de lijn"
     },
-    "Wachttijd opname": {
-      "type": "Delay",
-      "direct_transition": "Opname",
-      "range": {
-        "low": 7,
-        "high": 12,
-        "unit": "days"
-      }
-    },
     "Hartaandoening zeker": {
       "type": "ConditionOnset",
       "assign_to_attribute": "",
-      "target_encounter": "Hartbespreking",
+      "target_encounter": "MDO Hartteam",
       "codes": [
         {
           "system": "SNOMED-CT",
@@ -303,9 +295,9 @@
       ],
       "direct_transition": "Einde Aanvullend 2de lijn"
     },
-    "Wachtlijst Hartbespreking": {
+    "Wachtlijst MDO Hartteam": {
       "type": "Delay",
-      "direct_transition": "Hartbespreking",
+      "direct_transition": "MDO Hartteam",
       "range": {
         "low": 4,
         "high": 7,
@@ -336,11 +328,132 @@
     },
     "Einde Aanvullend 2de lijn": {
       "type": "EncounterEnd",
-      "direct_transition": "Wachttijd opname"
+      "conditional_transition": [
+        {
+          "transition": "Geriater",
+          "condition": {
+            "condition_type": "Age",
+            "operator": ">",
+            "quantity": 70,
+            "unit": "years"
+          }
+        },
+        {
+          "transition": "Wachttijd opname prikpoli"
+        }
+      ]
     },
     "Einde Opname": {
       "type": "EncounterEnd",
       "direct_transition": "1 mnd"
+    },
+    "Geriater": {
+      "type": "Encounter",
+      "encounter_class": "ambulatory",
+      "reason": "",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": "1234",
+          "display": "Geriater"
+        }
+      ],
+      "direct_transition": "Wachttijd opname prikpoli"
+    },
+    "LabHb": {
+      "type": "Observation",
+      "category": "laboratory",
+      "unit": "mmol/l",
+      "codes": [
+        {
+          "system": "LOINC",
+          "code": "717-9",
+          "display": "Hb"
+        }
+      ],
+      "direct_transition": "LabHt",
+      "range": {
+        "low": 8,
+        "high": 15
+      }
+    },
+    "LabHt": {
+      "type": "Observation",
+      "category": "laboratory",
+      "unit": "l/l",
+      "codes": [
+        {
+          "system": "LOINC",
+          "code": "20570-8",
+          "display": "Ht"
+        }
+      ],
+      "direct_transition": "Einde Opname",
+      "range": {
+        "low": 0.4,
+        "high": 0.6
+      }
+    },
+    "Wachttijd opname": {
+      "type": "Delay",
+      "exact": {
+        "quantity": 1,
+        "unit": "days"
+      },
+      "direct_transition": "Opname"
+    },
+    "Lab Panel": {
+      "type": "CallSubmodule",
+      "submodule": "sub/diagnostiek_lab_panel",
+      "direct_transition": "Wachttijd opname"
+    },
+    "Wachttijd opname prikpoli": {
+      "type": "Delay",
+      "range": {
+        "low": 7,
+        "high": 12,
+        "unit": "days"
+      },
+      "direct_transition": "Prikpoli"
+    },
+    "Prikpoli": {
+      "type": "Encounter",
+      "encounter_class": "ambulatory",
+      "reason": "",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": "1234",
+          "display": "Prikpoli"
+        }
+      ],
+      "direct_transition": "New_State"
+    },
+    "New_State": {
+      "type": "Procedure",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": "1234",
+          "display": "Afnemen SF-12 QoL en Informed Consent"
+        }
+      ],
+      "duration": {
+        "low": 30,
+        "high": 30,
+        "unit": "minutes"
+      },
+      "direct_transition": "Lab Panel"
+    },
+    "New_State_2": {
+      "type": "CallSubmodule",
+      "submodule": "sub/diagnostiek_poli_lab_panel",
+      "direct_transition": "12 mnd"
+    },
+    "New_State_3": {
+      "type": "CallSubmodule",
+      "submodule": "sub/diagnostiek_poli_lab_panel",
+      "direct_transition": "Terminal"
     }
   }
 }

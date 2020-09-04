@@ -1,0 +1,87 @@
+{
+  "name": "Diagnostiek lab panel",
+  "remarks": [
+    "Aanlevering diagnostiek 2de lijn."
+  ],
+  "states": {
+    "Initial": {
+      "type": "Initial",
+      "direct_transition": "Lab9"
+    },
+    "Terminal": {
+      "type": "Terminal"
+    },
+    "Lab9": {
+      "type": "Observation",
+      "category": "laboratory",
+      "unit": "mmol/l",
+      "codes": [
+        {
+          "system": "loinc",
+          "code": "717-9",
+          "display": "Hb"
+        }
+      ],
+      "direct_transition": "Lab12",
+      "range": {
+        "decimals": 2,
+        "low": 8,
+        "high": 15
+      }
+    },
+    "Lab12": {
+      "type": "Observation",
+      "category": "laboratory",
+      "unit": "μmol/L",
+      "codes": [
+        {
+          "system": "loinc",
+          "code": "59826-8",
+          "display": "Kreatinine"
+        }
+      ],
+      "direct_transition": "Lab19",
+      "range": {
+        "decimals": 2,
+        "low": 60,
+        "high": 120
+      }
+    },
+    "Lab19": {
+      "type": "Observation",
+      "category": "laboratory",
+      "unit": "mmol/l",
+      "codes": [
+        {
+          "system": "loinc",
+          "code": "20977-5",
+          "display": "Ureum"
+        }
+      ],
+      "direct_transition": "Lab20",
+      "range": {
+        "decimals": 2,
+        "low": 1.6,
+        "high": 7.4
+      }
+    },
+    "Lab20": {
+      "type": "Observation",
+      "category": "laboratory",
+      "unit": "pg/mL",
+      "codes": [
+        {
+          "system": "loinc",
+          "code": "33762-6",
+          "display": "NT Pro-BNP"
+        }
+      ],
+      "direct_transition": "Terminal",
+      "range": {
+        "decimals": 2,
+        "low": 850,
+        "high": 950
+      }
+    }
+  }
+}

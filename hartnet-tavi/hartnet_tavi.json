@@ -35,7 +35,7 @@
           "display": "Contact 2e lijn"
         }
       ],
-      "direct_transition": "Diagnose"
+      "direct_transition": "New_State"
     },
     "Diagnose": {
       "type": "ConditionOnset",
@@ -109,7 +109,7 @@
       "allow": {
         "condition_type": "Age",
         "operator": ">",
-        "quantity": 18,
+        "quantity": 70,
         "unit": "years"
       },
       "conditional_transition": [
@@ -132,6 +132,11 @@
     "Initial": {
       "type": "Initial",
       "direct_transition": "Guard"
+    },
+    "New_State": {
+      "type": "CallSubmodule",
+      "submodule": "sub/diagnostiek_poli_lab_panel",
+      "direct_transition": "Diagnose"
     }
   }
 }

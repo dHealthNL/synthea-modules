@@ -71,11 +71,11 @@
       "distributed_transition": [
         {
           "transition": "Hartaandoening",
-          "distribution": 0.1
+          "distribution": 0.4
         },
         {
           "transition": "VG3",
-          "distribution": 0.9
+          "distribution": 0.6
         }
       ]
     },
@@ -84,11 +84,11 @@
       "distributed_transition": [
         {
           "transition": "Diabetes",
-          "distribution": 0.1
+          "distribution": 0.4
         },
         {
           "transition": "VG2",
-          "distribution": 0.9
+          "distribution": 0.6
         }
       ]
     },
@@ -97,11 +97,11 @@
       "distributed_transition": [
         {
           "transition": "Hartoperatie",
-          "distribution": 0.1
+          "distribution": 0.4
         },
         {
           "transition": "VG4",
-          "distribution": 0.9
+          "distribution": 0.6
         }
       ]
     },
@@ -110,11 +110,11 @@
       "distributed_transition": [
         {
           "transition": "Hartaandoening in familie",
-          "distribution": 0.1
+          "distribution": 0.4
         },
         {
           "transition": "VG5",
-          "distribution": 0.9
+          "distribution": 0.6
         }
       ]
     },
