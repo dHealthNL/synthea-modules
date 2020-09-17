@@ -1,17 +1,15 @@
 {
-  "name": "Untitled",
+  "name": "DM module",
   "remarks": [
-    "A blank module"
+    "DM module"
   ],
   "states": {
     "Initial": {
       "type": "Initial",
-      "direct_transition": "Age Guard",
-      "name": "Initial"
+      "direct_transition": "Age Guard"
     },
     "Terminal": {
-      "type": "Terminal",
-      "name": "Terminal"
+      "type": "Terminal"
     },
     "Age Guard": {
       "type": "Guard",
@@ -21,48 +19,42 @@
         "quantity": 45,
         "unit": "years"
       },
-      "name": "Age Guard",
       "direct_transition": "Klachten willekeurig geven"
     },
     "Klachten willekeurig geven": {
-      "type": "Encounter",
-      "name": "Klachten willekeurig geven",
+      "type": "ConditionOnset",
+      "assign_to_attribute": "",
+      "target_encounter": "Huisarts",
       "codes": [
         {
           "system": "SNOMED-CT",
           "code": 68566005,
-          "display": "urineweginfectie (aandoening)",
-          "value_set": ""
+          "display": "urineweginfectie (aandoening)"
         },
         {
           "system": "SNOMED-CT",
           "code": 17173007,
-          "display": "polydipsie (bevinding)",
-          "value_set": ""
+          "display": "polydipsie (bevinding)"
         },
         {
           "system": "SNOMED-CT",
           "code": 28442001,
-          "display": "polyurie (bevinding)",
-          "value_set": ""
+          "display": "polyurie (bevinding)"
         },
         {
           "system": "SNOMED-CT",
           "code": 48026007,
-          "display": "inanitie (aandoening)",
-          "value_set": ""
+          "display": "inanitie (aandoening)"
         },
         {
           "system": "SNOMED-CT",
           "code": 67882000,
-          "display": "pruritus vulvae (aandoening)",
-          "value_set": ""
+          "display": "pruritus vulvae (aandoening)"
         },
         {
           "system": "SNOMED-CT",
           "code": 279058003,
-          "display": "neurogene pijnen (bevinding)",
-          "value_set": ""
+          "display": "neurogene pijnen (bevinding)"
         }
       ],
       "direct_transition": "Huisarts"
@@ -72,7 +64,6 @@
       "encounter_class": "ambulatory",
       "reason": "Select Condition/Enter Attribute",
       "codes": [],
-      "name": "Huisarts",
       "distributed_transition": [
         {
           "transition": "Toevoegen aan familiehistorie",
@@ -92,21 +83,17 @@
         {
           "system": "SNOMED-CT",
           "code": 60303001,
-          "display": "diabetes mellitus in familieanamnese (situatie)",
-          "value_set": ""
+          "display": "diabetes mellitus in familieanamnese (situatie)"
         }
       ],
-      "direct_transition": "Toevoegen aan lichamelijke anamnese",
-      "name": "Toevoegen aan familiehistorie"
+      "direct_transition": "Toevoegen aan lichamelijke anamnese"
     },
     "Toevoegen aan lichamelijke anamnese": {
       "type": "Simple",
-      "name": "Toevoegen aan lichamelijke anamnese",
       "direct_transition": "POC Bloedglucosebepaling NUCHTER"
     },
     "POC Bloedglucosebepaling NUCHTER": {
       "type": "Simple",
-      "name": "POC Bloedglucosebepaling NUCHTER",
       "conditional_transition": [
         {
           "transition": "Geen diabetes mellitus",
@@ -136,12 +123,10 @@
         {
           "system": "SNOMED-CT",
           "code": "1234",
-          "display": "SNOMED Code",
-          "value_set": ""
+          "display": "SNOMED Code"
         }
       ],
-      "direct_transition": "POC Bloedglucosebepaling NUCHTER 2",
-      "name": "Huisarts_2"
+      "direct_transition": "POC Bloedglucosebepaling NUCHTER 2"
     },
     "POC Bloedglucosebepaling NUCHTER 2": {
       "type": "Simple",
@@ -160,17 +145,15 @@
           "condition": {
             "condition_type": "Vital Sign",
             "vital_sign": "bloedglucose",
-            "operator": "<=",
+            "operator": ">=",
             "value": 7
           }
         }
-      ],
-      "name": "POC Bloedglucosebepaling NUCHTER 2"
+      ]
     },
     "Delay": {
       "type": "Delay",
       "direct_transition": "Huisarts_2",
-      "name": "Delay",
       "range": {
         "low": 1,
         "high": 2,
@@ -179,8 +162,7 @@
     },
     "Geen diabetes mellitus": {
       "type": "ConditionEnd",
-      "direct_transition": "Terminal",
-      "name": "Geen diabetes mellitus"
+      "direct_transition": "Terminal"
     },
     "Actuele diagnose": {
       "type": "ConditionOnset",
@@ -190,12 +172,10 @@
         {
           "system": "SNOMED-CT",
           "code": 44054006,
-          "display": "diabetes mellitus type 2",
-          "value_set": ""
+          "display": "diabetes mellitus type 2"
         }
       ],
-      "direct_transition": "New_State",
-      "name": "Actuele diagnose"
+      "direct_transition": "New_State"
     },
     "New_State": {
       "type": "MedicationOrder",
@@ -203,11 +183,9 @@
         {
           "system": "RxNorm",
           "code": "1234",
-          "display": "RxNorm Code",
-          "value_set": ""
+          "display": "RxNorm Code"
         }
       ],
-      "name": "New_State",
       "direct_transition": "New_State_2"
     },
     "New_State_2": {
@@ -218,15 +196,13 @@
         {
           "system": "LOINC",
           "code": "1234",
-          "display": "LOINC Code",
-          "value_set": ""
+          "display": "LOINC Code"
         }
       ],
       "exact": {
         "quantity": 1
       },
-      "direct_transition": "Terminal",
-      "name": "New_State_2"
+      "direct_transition": "Terminal"
     }
   }
 }
