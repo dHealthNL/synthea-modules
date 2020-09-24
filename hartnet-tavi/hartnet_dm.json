@@ -175,28 +175,48 @@
           "display": "diabetes mellitus type 2"
         }
       ],
-      "direct_transition": "New_State"
+      "direct_transition": "Add medicatie"
     },
-    "New_State": {
+    "Add medicatie": {
       "type": "MedicationOrder",
       "codes": [
         {
           "system": "RxNorm",
-          "code": "1234",
-          "display": "RxNorm Code"
+          "code": "Unknown",
+          "display": "40% = Metformine (700mg 1dd, max. 1000mg 3dd)"
+        },
+        {
+          "system": "RxNorm",
+          "code": "Unknown",
+          "display": "30% = gliclazide langwerkend 20 mg 1 dd tot max 120 mg 3 dd)"
+        },
+        {
+          "system": "RxNorm",
+          "code": "Unknown",
+          "display": "20% = NPH-insuline 10 E"
+        },
+        {
+          "system": "RxNorm",
+          "code": "Unknown",
+          "display": "10% = 4 E snelwerkende insuline (humane insuline)"
         }
       ],
-      "direct_transition": "New_State_2"
+      "direct_transition": "Bloedglucose metingen"
     },
-    "New_State_2": {
+    "Bloedglucose metingen": {
       "type": "Observation",
-      "category": "vital-signs",
+      "category": "laboratory",
       "unit": "",
       "codes": [
         {
           "system": "LOINC",
-          "code": "1234",
-          "display": "LOINC Code"
+          "code": "14771-0",
+          "display": "1dd: bloedglucose nuchter waarden tussen 5 - 8"
+        },
+        {
+          "system": "LOINC",
+          "code": "14749-6",
+          "display": "1dd: bloedglucose NIET nuchter tussen 7 - 15"
         }
       ],
       "exact": {
